@@ -129,6 +129,7 @@ function HollowLib:CreateWindow(config)
     -- Main Frame
     local Main = MakeFrame(ScreenGui, UDim2.new(0,curW,0,curH), UDim2.new(0.5,-curW/2,0.5,-curH/2), Theme.Background)
     Main.Name = "HollowWindow" Main.ClipsDescendants = false
+    Main.BackgroundTransparency = 0.15
     MakeCorner(Main, Radius.Window) MakeStroke(Main, Theme.Border, 1)
 
     -- Shadow
@@ -139,19 +140,32 @@ function HollowLib:CreateWindow(config)
     Shadow.ZIndex = -1 Shadow.Parent = Main
 
     -- Topbar
-    local Topbar = MakeFrame(Main, UDim2.new(1,0,0,34), nil, Theme.Sidebar)
+    local Topbar = Instance.new("Frame")
+    Topbar.Size = UDim2.new(1,0,0,34)
+    Topbar.Position = UDim2.new(0,0,0,0)
+    Topbar.BackgroundColor3 = Theme.Sidebar
+    Topbar.BackgroundTransparency = 0.1
+    Topbar.BorderSizePixel = 0
+    Topbar.Parent = Main
     MakeCorner(Topbar, Radius.Window)
-    MakeFrame(Topbar, UDim2.new(1,0,0.5,0), UDim2.new(0,0,0.5,0), Theme.Sidebar)
+    -- Bottom fill to square off bottom corners
+    local TopbarFill = Instance.new("Frame")
+    TopbarFill.Size = UDim2.new(1,0,0.5,0)
+    TopbarFill.Position = UDim2.new(0,0,0.5,0)
+    TopbarFill.BackgroundColor3 = Theme.Sidebar
+    TopbarFill.BackgroundTransparency = 0.1
+    TopbarFill.BorderSizePixel = 0
+    TopbarFill.Parent = Topbar
 
-    -- Logo
+    -- Logo (direct ImageLabel, no container, no border)
     local LogoImg = Instance.new("ImageLabel")
+    LogoImg.Name = "Logo"
     LogoImg.Image = "rbxassetid://87465223885645"
-    LogoImg.Size = UDim2.new(0,32,0,32)
-    LogoImg.Position = UDim2.new(0,6,0.5,-16)
+    LogoImg.Size = UDim2.new(0,30,0,30)
+    LogoImg.Position = UDim2.new(0,5,0,2)
     LogoImg.BackgroundTransparency = 1
     LogoImg.BorderSizePixel = 0
     LogoImg.ScaleType = Enum.ScaleType.Fit
-    LogoImg.ImageColor3 = Color3.fromRGB(255,255,255)
     LogoImg.Parent = Topbar
 
     -- Title
@@ -218,20 +232,24 @@ function HollowLib:CreateWindow(config)
     -- Content
     local Content = MakeFrame(Main, UDim2.new(1,0,1,-34), UDim2.new(0,0,0,34), Theme.Background)
     Content.Name = "HollowContent"
+    Content.BackgroundTransparency = 0.15
 
     -- Sidebar
     local Sidebar = MakeFrame(Content, UDim2.new(0,124,1,0), nil, Theme.Sidebar)
+    Sidebar.BackgroundTransparency = 0.1
     MakeStroke(Sidebar, Theme.Border, 1)
 
     local SideTitle = MakeLabel(Sidebar, "NAVIGATION", 9, Theme.TextDisabled, Enum.Font.GothamBold)
     SideTitle.Size = UDim2.new(1,-20,0,18) SideTitle.Position = UDim2.new(0,12,0,10)
 
     local TabList = MakeFrame(Sidebar, UDim2.new(1,0,1,-46), UDim2.new(0,0,0,32), Theme.Sidebar)
+    TabList.BackgroundTransparency = 1
     TabList.ClipsDescendants = true
     MakeList(TabList, 5) MakePadding(TabList, 4, 6, 10, 10)
 
     -- Player info
     local PlayerInfo = MakeFrame(Sidebar, UDim2.new(1,0,0,40), UDim2.new(0,0,1,-40), Theme.Sidebar)
+    PlayerInfo.BackgroundTransparency = 0.1
     MakeStroke(PlayerInfo, Theme.Border, 1) MakePadding(PlayerInfo, 6, 6, 10, 10)
     local PlayerAvatar = MakeImage(PlayerInfo, "https://www.roblox.com/headshot-thumbnail/image?userId="..LocalPlayer.UserId.."&width=48&height=48&format=png", UDim2.new(0,22,0,22), UDim2.new(0,0,0.5,-11))
     MakeCorner(PlayerAvatar, 11)
@@ -286,6 +304,7 @@ function HollowLib:CreateWindow(config)
 
     -- ===== WATERMARK =====
     local Watermark = MakeFrame(ScreenGui, UDim2.new(0, isMobile and 160 or 220, 0, 24), UDim2.new(0,12,0,12), Theme.Watermark)
+    Watermark.BackgroundTransparency = 0.2
     MakeCorner(Watermark, Radius.Small) MakeStroke(Watermark, Theme.Border, 1)
 
     local WMBar = MakeFrame(Watermark, UDim2.new(0,3,0,14), UDim2.new(0,0,0.5,-7), Theme.Accent)
@@ -397,12 +416,15 @@ function HollowLib:CreateWindow(config)
 
             local GroupFrame = MakeFrame(col, UDim2.new(1,0,0,0), nil, Theme.GroupBG)
             GroupFrame.AutomaticSize = Enum.AutomaticSize.Y
+            GroupFrame.BackgroundTransparency = 0.15
             MakeCorner(GroupFrame, Radius.Group) MakeStroke(GroupFrame, Theme.Border, 1)
             GroupFrame.ClipsDescendants = false
 
             local Header = MakeFrame(GroupFrame, UDim2.new(1,0,0,28), nil, Theme.GroupHeader)
+            Header.BackgroundTransparency = 0.1
             MakeCorner(Header, Radius.Group)
-            MakeFrame(Header, UDim2.new(1,0,0.5,0), UDim2.new(0,0,0.5,0), Theme.GroupHeader)
+            local HeaderFill = MakeFrame(Header, UDim2.new(1,0,0.5,0), UDim2.new(0,0,0.5,0), Theme.GroupHeader)
+            HeaderFill.BackgroundTransparency = 0.1
 
             local AccentLine = MakeFrame(Header, UDim2.new(0,3,0,12), UDim2.new(0,8,0.5,-6), Theme.Accent)
             MakeCorner(AccentLine, 2)
@@ -413,6 +435,7 @@ function HollowLib:CreateWindow(config)
 
             local ItemContainer = MakeFrame(GroupFrame, UDim2.new(1,0,0,0), UDim2.new(0,0,0,28), Theme.GroupBG)
             ItemContainer.AutomaticSize = Enum.AutomaticSize.Y
+            ItemContainer.BackgroundTransparency = 0.15
             MakeCorner(ItemContainer, Radius.Group) MakePadding(ItemContainer, 6, 8, 6, 6)
             MakeList(ItemContainer, 8)
 
@@ -826,6 +849,7 @@ function HollowLib:CreateWindow(config)
         end
 
         local NotifFrame = MakeFrame(ScreenGui, UDim2.new(0,210,0,36), UDim2.new(1,10,1,-56), Theme.GroupBG)
+        NotifFrame.BackgroundTransparency = 0.15
         MakeCorner(NotifFrame, Radius.Group) MakeStroke(NotifFrame, Theme.Border, 1)
         local NotifBar = MakeFrame(NotifFrame, UDim2.new(0,3,1,-8), UDim2.new(0,0,0,4), Theme.Accent) MakeCorner(NotifBar, 2)
         local NotifText = MakeLabel(NotifFrame, text, 10, Theme.Text, Enum.Font.GothamMedium)
