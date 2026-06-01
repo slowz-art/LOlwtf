@@ -135,7 +135,7 @@ function HollowLib:CreateWindow(config)
     local LogoContainer = MakeFrame(Topbar, UDim2.new(0,28,0,28), UDim2.new(0,10,0.5,-14), Color3.fromRGB(20,20,24))
     MakeCorner(LogoContainer, 6)
     local LogoStroke = Instance.new("UIStroke") LogoStroke.Color = Theme.Accent LogoStroke.Thickness = 1 LogoStroke.Parent = LogoContainer
-    local LogoImg = MakeImage(LogoContainer, "rbxassetid://109250647122928", UDim2.new(1,-6,1,-6), UDim2.new(0,3,0,3))
+    local LogoImg = MakeImage(LogoContainer, "rbxassetid://87465223885645", UDim2.new(1,-6,1,-6), UDim2.new(0,3,0,3))
     LogoImg.ScaleType = Enum.ScaleType.Fit
 
     -- Title
