@@ -80,7 +80,7 @@ local function MakeLabel(p, txt, sz, c, f, xa)
     l.Font = f or Enum.Font.GothamMedium l.BackgroundTransparency = 1
     l.TextXAlignment = xa or Enum.TextXAlignment.Left
     l.TextTruncate = Enum.TextTruncate.AtEnd
-    l.Size = UDim2.new(1, 0, 0, (sz or 13) + 4) l.Parent = p return l
+    l.Size = UDim2.new(1, 0, 0, (sz or 13) + 6) l.Parent = p return l
 end
 
 local function MakeFrame(p, s, pos, c, tr)
@@ -443,8 +443,8 @@ function HollowLib:CreateWindow(config)
 
             local ItemContainer = MakeFrame(GroupFrame, UDim2.new(1,0,0,0), UDim2.new(0,0,0,28), Theme.GroupBG)
             ItemContainer.AutomaticSize = Enum.AutomaticSize.Y
-            MakeCorner(ItemContainer, Radius.Group) MakePadding(ItemContainer, 3, 5, 5, 5)
-            MakeList(ItemContainer, 3)
+            MakeCorner(ItemContainer, Radius.Group) MakePadding(ItemContainer, 6, 8, 8, 8)
+            MakeList(ItemContainer, 8)
 
             Header.MouseButton1Click:Connect(function()
                 collapsed = not collapsed
@@ -458,7 +458,7 @@ function HollowLib:CreateWindow(config)
                 local state = cfg.Default or false
                 local callback = cfg.Callback or function() end
 
-                local Row = MakeFrame(ItemContainer, UDim2.new(1,0,0,26), nil, Theme.ItemBG)
+                
                 MakeCorner(Row, Radius.Item) MakePadding(Row, 0, 0, 8, 8)
 
                 local RowBtn = MakeButton(Row, UDim2.new(1,0,1,0), nil, Theme.ItemBG)
@@ -507,7 +507,7 @@ function HollowLib:CreateWindow(config)
                 local callback = cfg.Callback or function() end
                 local dragging = false
 
-                local Container = MakeFrame(ItemContainer, UDim2.new(1,0,0,38), nil, Theme.ItemBG)
+                local Container = MakeFrame(ItemContainer, UDim2.new(1,0,0,46), nil, Theme.ItemBG)
                 MakeCorner(Container, Radius.Item) MakePadding(Container, 5, 5, 8, 8)
 
                 local TopRow = MakeFrame(Container, UDim2.new(1,0,0,14), nil, Theme.ItemBG)
@@ -572,7 +572,7 @@ function HollowLib:CreateWindow(config)
                 local text = cfg.Text or "Button"
                 local callback = cfg.Func or cfg.Callback or function() end
 
-                local Btn = MakeButton(ItemContainer, UDim2.new(1,0,0,26), nil, Theme.ItemBG)
+                local Btn = MakeButton(ItemContainer, UDim2.new(1,0,0,30), nil, Theme.ItemBG)
                 MakeCorner(Btn, Radius.Button) MakeStroke(Btn, Theme.Border, 1)
 
                 local BtnLabel = MakeLabel(Btn, text, 11, Theme.Text, Enum.Font.GothamMedium, Enum.TextXAlignment.Center)
@@ -637,7 +637,7 @@ function HollowLib:CreateWindow(config)
                     for _, c in pairs(OptionList:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
                     for _, val in ipairs(values) do
                         local isSel = (multi and multiSelected[val]) or (not multi and selected == val)
-                        local Opt = MakeButton(OptionList, UDim2.new(1,0,0,22), nil, isSel and Theme.AccentDark or Theme.DropBG)
+                        local Opt = MakeButton(OptionList, UDim2.new(1,0,0,26), nil, ...) isSel and Theme.AccentDark or Theme.DropBG)
                         MakeCorner(Opt, Radius.DropOpt)
                         local OptLabel = MakeLabel(Opt, tostring(val), 10, isSel and Theme.Text or Theme.TextDim, Enum.Font.GothamMedium)
                         OptLabel.Size = UDim2.new(1,-8,1,0) OptLabel.Position = UDim2.new(0,8,0,0)
@@ -795,7 +795,7 @@ function HollowLib:CreateWindow(config)
                 local callback = cfg.Callback or function() end
                 local listening = false
 
-                local Row = MakeFrame(ItemContainer, UDim2.new(1,0,0,26), nil, Theme.ItemBG)
+                local Row = MakeFrame(ItemContainer, UDim2.new(1,0,0,30), nil, Theme.ItemBG)
                 MakeCorner(Row, Radius.Item) MakePadding(Row, 0, 0, 8, 8)
 
                 local KBLabel = MakeLabel(Row, cfg.Text or id, 11, Theme.Text, Enum.Font.GothamMedium)
