@@ -139,6 +139,22 @@ function HollowLib:CreateWindow(config)
     Shadow.Position = UDim2.new(0,-20,0,-20) Shadow.BackgroundTransparency = 1
     Shadow.ZIndex = -1 Shadow.Parent = Main
 
+    -- Background Image (user-customizable)
+    local BGImage = Instance.new("ImageLabel")
+    BGImage.Name = "BackgroundImage"
+    BGImage.Size = UDim2.new(1,0,1,0)
+    BGImage.Position = UDim2.new(0,0,0,0)
+    BGImage.BackgroundTransparency = 1
+    BGImage.BorderSizePixel = 0
+    BGImage.ImageTransparency = 0.65
+    BGImage.ScaleType = Enum.ScaleType.Crop
+    BGImage.ZIndex = 0
+    BGImage.Parent = Main
+    MakeCorner(BGImage, Radius.Window)
+    if config.BackgroundImage then
+        BGImage.Image = "rbxassetid://"..tostring(config.BackgroundImage)
+    end
+
     -- Topbar
     local Topbar = Instance.new("Frame")
     Topbar.Size = UDim2.new(1,0,0,34)
@@ -157,12 +173,12 @@ function HollowLib:CreateWindow(config)
     TopbarFill.BorderSizePixel = 0
     TopbarFill.Parent = Topbar
 
-    -- Logo (direct ImageLabel, no container, no border)
+    -- Logo
     local LogoImg = Instance.new("ImageLabel")
     LogoImg.Name = "Logo"
-    LogoImg.Image = "rbxassetid://87465223885645"
-    LogoImg.Size = UDim2.new(0,48,0,48)
-    LogoImg.Position = UDim2.new(0,2,0.5,-24)
+    LogoImg.Image = config.Logo or "rbxassetid://87465223885645"
+    LogoImg.Size = UDim2.new(0,56,0,56)
+    LogoImg.Position = UDim2.new(0,2,0.5,-28)
     LogoImg.BackgroundTransparency = 1
     LogoImg.BorderSizePixel = 0
     LogoImg.ScaleType = Enum.ScaleType.Fit
@@ -170,9 +186,9 @@ function HollowLib:CreateWindow(config)
     LogoImg.Parent = Topbar
 
     -- Title
-    local TitleLabel = MakeLabel(Topbar, config.Title or "HollowLib", 13, Theme.Text, Enum.Font.GothamBold)
+    local TitleLabel = MakeLabel(Topbar, config.Title or "HollowLib", 14, Theme.Text, Enum.Font.GothamBold)
     TitleLabel.Size = UDim2.new(1, isMobile and -140 or -100, 1, 0)
-    TitleLabel.Position = UDim2.new(0, 52, 0, 0) TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
+    TitleLabel.Position = UDim2.new(0, 58, 0, 0) TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
 
     -- Topbar buttons helper
     local topBtnOffset = -30
@@ -259,9 +275,9 @@ function HollowLib:CreateWindow(config)
     MakeStroke(PlayerInfo, Theme.Border, 1) MakePadding(PlayerInfo, 6, 6, 10, 10)
     local PlayerAvatar = MakeImage(PlayerInfo, "https://www.roblox.com/headshot-thumbnail/image?userId="..LocalPlayer.UserId.."&width=48&height=48&format=png", UDim2.new(0,22,0,22), UDim2.new(0,0,0.5,-11))
     MakeCorner(PlayerAvatar, 11)
-    local PlayerName = MakeLabel(PlayerInfo, LocalPlayer.DisplayName, 10, Theme.Text, Enum.Font.GothamMedium)
+    local PlayerName = MakeLabel(PlayerInfo, config.DisplayName or LocalPlayer.DisplayName, 10, Theme.Text, Enum.Font.GothamMedium)
     PlayerName.Size = UDim2.new(1,-30,0,13) PlayerName.Position = UDim2.new(0,28,0,6)
-    local PlayerUser = MakeLabel(PlayerInfo, "@"..LocalPlayer.Name, 9, Theme.TextDisabled, Enum.Font.Gotham)
+    local PlayerUser = MakeLabel(PlayerInfo, "@"..(config.Username or LocalPlayer.Name), 9, Theme.TextDisabled, Enum.Font.Gotham)
     PlayerUser.Size = UDim2.new(1,-30,0,12) PlayerUser.Position = UDim2.new(0,28,0,20)
 
     -- Tab content area
@@ -334,7 +350,7 @@ function HollowLib:CreateWindow(config)
         TabBtn.BackgroundTransparency = 1
         MakeCorner(TabBtn, Radius.Small)
 
-        local TabIndicator = MakeFrame(TabBtn, UDim2.new(0,3,0,14), UDim2.new(0,0,0.5,-7), Theme.Accent)
+        local TabIndicator = MakeFrame(TabBtn, UDim2.new(0,3,0,10), UDim2.new(0,0,0.5,-5), Theme.Accent)
         TabIndicator.BackgroundTransparency = 1 MakeCorner(TabIndicator, 2)
 
         local TabIcon = MakeLabel(TabBtn, icon or "", 12, Theme.TextDim, Enum.Font.GothamMedium)
@@ -399,26 +415,28 @@ function HollowLib:CreateWindow(config)
 
         local function Activate()
             if ActiveTab and ActiveTab ~= Tab then ActiveTab:_deactivate() end
-            isActive = true ActiveTab = Tab TabPage.Visible = true
-            Tween(TabBtn, {BackgroundColor3=Theme.TabHover}, 0.15)
-            Tween(TabLabel, {TextColor3=Theme.Text}, 0.15)
-            Tween(TabIcon, {TextColor3=Theme.Accent}, 0.15)
-            Tween(TabIndicator, {BackgroundTransparency=0}, 0.15)
+            isActive = true ActiveTab = Tab
+            TabPage.Visible = true
+            TabScroll.CanvasPosition = Vector2.new(0, 0)
+            Tween(TabBtn, {BackgroundColor3=Theme.TabHover}, 0.2, Enum.EasingStyle.Quint)
+            Tween(TabLabel, {TextColor3=Theme.Text}, 0.2, Enum.EasingStyle.Quint)
+            Tween(TabIcon, {TextColor3=Theme.Accent}, 0.2, Enum.EasingStyle.Quint)
+            Tween(TabIndicator, {BackgroundTransparency=0, Size=UDim2.new(0,3,0,18)}, 0.25, Enum.EasingStyle.Back)
         end
 
         function Tab:_deactivate()
             isActive = false TabPage.Visible = false
-            Tween(TabBtn, {BackgroundColor3=Theme.TabInactive}, 0.15)
-            Tween(TabLabel, {TextColor3=Theme.TextDim}, 0.15)
-            Tween(TabIcon, {TextColor3=Theme.TextDim}, 0.15)
-            Tween(TabIndicator, {BackgroundTransparency=1}, 0.15)
+            Tween(TabBtn, {BackgroundColor3=Theme.TabInactive}, 0.2, Enum.EasingStyle.Quint)
+            Tween(TabLabel, {TextColor3=Theme.TextDim}, 0.2, Enum.EasingStyle.Quint)
+            Tween(TabIcon, {TextColor3=Theme.TextDim}, 0.2, Enum.EasingStyle.Quint)
+            Tween(TabIndicator, {BackgroundTransparency=1, Size=UDim2.new(0,3,0,10)}, 0.2, Enum.EasingStyle.Quint)
         end
 
         TabBtn.MouseEnter:Connect(function()
-            if not isActive then Tween(TabBtn, {BackgroundColor3=Color3.fromRGB(22,18,18)}, 0.15) end
+            if not isActive then Tween(TabBtn, {BackgroundColor3=Color3.fromRGB(22,18,18)}, 0.2, Enum.EasingStyle.Quint) end
         end)
         TabBtn.MouseLeave:Connect(function()
-            if not isActive then Tween(TabBtn, {BackgroundColor3=Theme.TabInactive}, 0.15) end
+            if not isActive then Tween(TabBtn, {BackgroundColor3=Theme.TabInactive}, 0.2, Enum.EasingStyle.Quint) end
         end)
         TabBtn.MouseButton1Click:Connect(Activate)
         if #Tabs == 0 then Activate() end
@@ -727,7 +745,13 @@ function HollowLib:CreateWindow(config)
 
                 Header.MouseButton1Click:Connect(function()
                     open = not open OptionList.Visible = open
-                    Tween(DropArrow, {Rotation=open and 180 or 0}, 0.2) BuildOptions()
+                    Tween(DropArrow, {Rotation=open and 180 or 0}, 0.25, Enum.EasingStyle.Quint)
+                    if open then
+                        DropArrow.ImageColor3 = Theme.Accent
+                    else
+                        DropArrow.ImageColor3 = Theme.TextDim
+                    end
+                    BuildOptions()
                 end)
                 BuildOptions()
 
@@ -993,58 +1017,77 @@ function HollowLib:CreateWindow(config)
     local notifStack = {}
     function Window:Notify(text, duration)
         duration = duration or 3
-        local title = "Notification"
-        local desc = text
-        if type(text) == "table" then title = text.Title or "Notification" desc = text.Description or "" end
+        local title = "Notice"
+        local desc = tostring(text)
+        if type(text) == "table" then
+            title = text.Title or "Notice"
+            desc = text.Description or ""
+        end
 
         -- Push existing notifs up
         for _, nf in ipairs(notifStack) do
             local cur = nf.Position
-            Tween(nf, {Position=UDim2.new(cur.X.Scale,cur.X.Offset,cur.Y.Scale,cur.Y.Offset-56)}, 0.3, Enum.EasingStyle.Quint)
+            Tween(nf, {Position=UDim2.new(cur.X.Scale,cur.X.Offset,cur.Y.Scale,cur.Y.Offset-58)}, 0.35, Enum.EasingStyle.Quint)
         end
 
-        local NotifFrame = MakeFrame(ScreenGui, UDim2.new(0,260,0,50), UDim2.new(1,10,1,-64), Theme.GroupBG)
-        NotifFrame.BackgroundTransparency = 0.15
-        NotifFrame.ClipsDescendants = true
-        MakeCorner(NotifFrame, 12) MakeStroke(NotifFrame, Theme.BorderBright, 1)
+        -- Container
+        local NF = MakeFrame(ScreenGui, UDim2.new(0,270,0,52), UDim2.new(1,12,1,-66), Theme.Background)
+        NF.BackgroundTransparency = 0.15
+        NF.ClipsDescendants = true
+        MakeCorner(NF, Radius.Group)
+        local NFStroke = MakeStroke(NF, Theme.Border, 1)
 
-        -- Top accent line
-        local NotifAccent = MakeFrame(NotifFrame, UDim2.new(1,0,0,2), UDim2.new(0,0,0,0), Theme.Accent)
+        -- Left accent bar
+        local NBar = MakeFrame(NF, UDim2.new(0,3,1,-12), UDim2.new(0,8,0,6), Theme.Accent)
+        MakeCorner(NBar, 2)
 
-        -- Title
-        local NotifTitle = MakeLabel(NotifFrame, title, 11, Theme.Text, Enum.Font.GothamBold)
-        NotifTitle.Size = UDim2.new(1,-20,0,16) NotifTitle.Position = UDim2.new(0,12,0,6)
+        -- Title text
+        local NTitle = MakeLabel(NF, title, 11, Theme.Text, Enum.Font.GothamBold)
+        NTitle.Size = UDim2.new(1,-28,0,15) NTitle.Position = UDim2.new(0,18,0,7)
 
-        -- Description
-        local NotifDesc = MakeLabel(NotifFrame, desc, 10, Theme.TextDim, Enum.Font.GothamMedium)
-        NotifDesc.Size = UDim2.new(1,-20,0,14) NotifDesc.Position = UDim2.new(0,12,0,22)
-        NotifDesc.TextWrapped = true
+        -- Description text
+        local NDesc = MakeLabel(NF, desc, 10, Theme.TextDim, Enum.Font.GothamMedium)
+        NDesc.Size = UDim2.new(1,-28,0,14) NDesc.Position = UDim2.new(0,18,0,24)
+        NDesc.TextWrapped = true
 
-        -- Timer drain bar at bottom
-        local TimerBar = MakeFrame(NotifFrame, UDim2.new(1,0,0,3), UDim2.new(0,0,1,-3), Theme.Accent)
-        TimerBar.BackgroundTransparency = 0.3
+        -- Bottom progress bar (drains over time)
+        local NProgress = MakeFrame(NF, UDim2.new(1,0,0,2), UDim2.new(0,0,1,-2), Theme.Accent)
+        NProgress.BackgroundTransparency = 0.4
 
-        table.insert(notifStack, 1, NotifFrame)
+        table.insert(notifStack, 1, NF)
 
-        -- Slide in
-        Tween(NotifFrame, {Position=UDim2.new(1,-272,1,-64)}, 0.4, Enum.EasingStyle.Quint)
+        -- Slide in with bounce
+        Tween(NF, {Position=UDim2.new(1,-282,1,-66)}, 0.45, Enum.EasingStyle.Quint)
+        Tween(NFStroke, {Color=Theme.BorderBright}, 0.3)
 
-        -- Drain the timer bar
-        task.delay(0.4, function()
-            Tween(TimerBar, {Size=UDim2.new(0,0,0,3)}, duration, Enum.EasingStyle.Linear)
+        -- Start draining after slide-in completes
+        task.delay(0.5, function()
+            Tween(NProgress, {Size=UDim2.new(0,0,0,2)}, duration - 0.5, Enum.EasingStyle.Linear)
         end)
 
-        -- Slide out after duration
-        task.delay(duration + 0.4, function()
-            Tween(NotifFrame, {Position=UDim2.new(1,10,1,-64)}, 0.4, Enum.EasingStyle.Quint)
+        -- Fade and slide out
+        task.delay(duration, function()
+            Tween(NF, {Position=UDim2.new(1,12,1,-66), BackgroundTransparency=0.8}, 0.4, Enum.EasingStyle.Quint)
+            Tween(NFStroke, {Transparency=0.8}, 0.3)
             task.wait(0.45)
-            for i, v in ipairs(notifStack) do if v == NotifFrame then table.remove(notifStack, i) break end end
-            NotifFrame:Destroy()
+            for i, v in ipairs(notifStack) do if v == NF then table.remove(notifStack, i) break end end
+            NF:Destroy()
         end)
     end
 
     function Window:SetWatermark(text) WMName.Text = text end
     function Window:SetWatermarkVisibility(visible) Watermark.Visible = visible end
+    function Window:SetBackground(textureId)
+        if textureId then
+            BGImage.Image = "rbxassetid://"..tostring(textureId)
+        else
+            BGImage.Image = ""
+        end
+    end
+    function Window:SetBackgroundTransparency(t) BGImage.ImageTransparency = t end
+    function Window:SetDisplayName(name) PlayerName.Text = name end
+    function Window:SetUsername(name) PlayerUser.Text = "@"..name end
+    function Window:SetLogo(textureId) LogoImg.Image = "rbxassetid://"..tostring(textureId) end
     function Window:Unload()
         ScreenGui:Destroy()
         if getgenv()._HollowUnload then getgenv()._HollowUnload() end
