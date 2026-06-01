@@ -270,16 +270,37 @@ function HollowLib:CreateWindow(config)
     TabContent.ClipsDescendants = true
 
     -- ===== WATERMARK =====
-    local Watermark = MakeFrame(ScreenGui, UDim2.new(0, isMobile and 160 or 220, 0, 24), UDim2.new(0,12,0,12), Theme.Watermark)
+    local Watermark = MakeFrame(ScreenGui, UDim2.new(0, isMobile and 170 or 240, 0, 28), UDim2.new(0,12,1,-40), Theme.Watermark)
     Watermark.BackgroundTransparency = 0.3
-    MakeCorner(Watermark, Radius.Small) MakeStroke(Watermark, Theme.Border, 1)
+    MakeCorner(Watermark, 10) 
+    local WMStroke = MakeStroke(Watermark, Theme.Border, 1)
 
-    local WMBar = MakeFrame(Watermark, UDim2.new(0,3,0,14), UDim2.new(0,0,0.5,-7), Theme.Accent)
+    -- Left accent bar
+    local WMBar = MakeFrame(Watermark, UDim2.new(0,3,0,16), UDim2.new(0,6,0.5,-8), Theme.Accent)
     MakeCorner(WMBar, 2)
 
-    local WatermarkText = MakeLabel(Watermark, "hollowoodz | 0fps | 0ms", 11, Theme.TextDim, Enum.Font.GothamMedium)
-    WatermarkText.Size = UDim2.new(1,-12,1,0) WatermarkText.Position = UDim2.new(0,10,0,0)
-    WatermarkText.TextYAlignment = Enum.TextYAlignment.Center
+    -- Name label
+    local WMName = MakeLabel(Watermark, "hollowoodz", 10, Theme.Text, Enum.Font.GothamBold)
+    WMName.Size = UDim2.new(0,72,1,0) WMName.Position = UDim2.new(0,14,0,0)
+    WMName.TextYAlignment = Enum.TextYAlignment.Center
+
+    -- Separator dot
+    local WMDot1 = MakeFrame(Watermark, UDim2.new(0,3,0,3), UDim2.new(0,88,0.5,-1), Theme.TextDisabled)
+    MakeCorner(WMDot1, 2)
+
+    -- FPS label
+    local WMFps = MakeLabel(Watermark, "60fps", 10, Theme.Accent, Enum.Font.GothamMedium)
+    WMFps.Size = UDim2.new(0,40,1,0) WMFps.Position = UDim2.new(0,96,0,0)
+    WMFps.TextYAlignment = Enum.TextYAlignment.Center WMFps.TextXAlignment = Enum.TextXAlignment.Center
+
+    -- Separator dot
+    local WMDot2 = MakeFrame(Watermark, UDim2.new(0,3,0,3), UDim2.new(0,138,0.5,-1), Theme.TextDisabled)
+    MakeCorner(WMDot2, 2)
+
+    -- Ping label
+    local WMPing = MakeLabel(Watermark, "0ms", 10, Theme.TextDim, Enum.Font.GothamMedium)
+    WMPing.Size = UDim2.new(0,40,1,0) WMPing.Position = UDim2.new(0,146,0,0)
+    WMPing.TextYAlignment = Enum.TextYAlignment.Center WMPing.TextXAlignment = Enum.TextXAlignment.Center
 
     local frameCount, frameTimer, fps = 0, tick(), 60
     local statsOk, stats = pcall(function() return game:GetService("Stats") end)
@@ -290,7 +311,12 @@ function HollowLib:CreateWindow(config)
         pcall(function()
             if statsOk and stats then ping = math.floor(stats.Network.ServerStatsItem["Data Ping"]:GetValue()) end
         end)
-        WatermarkText.Text = "hollowoodz | "..math.floor(fps).."fps | "..ping.."ms"
+        WMFps.Text = math.floor(fps).."fps"
+        WMPing.Text = ping.."ms"
+        -- Color code fps
+        if fps >= 50 then WMFps.TextColor3 = Theme.Accent
+        elseif fps >= 30 then WMFps.TextColor3 = Color3.fromRGB(220, 180, 30)
+        else WMFps.TextColor3 = Color3.fromRGB(220, 50, 50) end
     end)
 
     -- Open animation
@@ -443,30 +469,48 @@ function HollowLib:CreateWindow(config)
                 RowBtn.BackgroundTransparency = 1
 
                 local ToggleLabel = MakeLabel(Row, cfg.Text or id, 12, Theme.Text, Enum.Font.GothamMedium)
-                ToggleLabel.Size = UDim2.new(1,-46,1,0) ToggleLabel.TextYAlignment = Enum.TextYAlignment.Center
+                ToggleLabel.Size = UDim2.new(1,-50,1,0) ToggleLabel.TextYAlignment = Enum.TextYAlignment.Center
 
-                local ToggleBG = MakeFrame(Row, UDim2.new(0,36,0,18), UDim2.new(1,-38,0.5,-9), Theme.Toggle)
-                MakeCorner(ToggleBG, Radius.Toggle) MakeStroke(ToggleBG, Theme.Border, 1)
+                -- Bigger pill toggle
+                local ToggleBG = MakeFrame(Row, UDim2.new(0,40,0,22), UDim2.new(1,-42,0.5,-11), Theme.Toggle)
+                MakeCorner(ToggleBG, 11)
+                local ToggleStroke = MakeStroke(ToggleBG, Theme.Border, 1.5)
 
-                local ToggleCircle = MakeFrame(ToggleBG, UDim2.new(0,14,0,14), UDim2.new(0,2,0.5,-7), Theme.TextDisabled)
-                MakeCorner(ToggleCircle, 7)
+                -- Circle with shadow stroke
+                local ToggleCircle = MakeFrame(ToggleBG, UDim2.new(0,16,0,16), UDim2.new(0,3,0.5,-8), Theme.TextDisabled)
+                MakeCorner(ToggleCircle, 8)
+                local CircleStroke = Instance.new("UIStroke")
+                CircleStroke.Color = Theme.Border CircleStroke.Thickness = 1
+                CircleStroke.Transparency = 0.5 CircleStroke.Parent = ToggleCircle
 
                 local function SetState(newState, skipCb)
                     state = newState
                     if state then
-                        Tween(ToggleBG, {BackgroundColor3=Theme.ToggleOn}, 0.2)
-                        Tween(ToggleCircle, {Position=UDim2.new(1,-16,0.5,-7),BackgroundColor3=Theme.Text}, 0.2)
+                        Tween(ToggleBG, {BackgroundColor3=Theme.ToggleOn}, 0.25, Enum.EasingStyle.Quint)
+                        Tween(ToggleStroke, {Color=Theme.Accent, Transparency=0.3}, 0.25)
+                        Tween(ToggleCircle, {Position=UDim2.new(1,-19,0.5,-8), BackgroundColor3=Theme.Text, Size=UDim2.new(0,16,0,16)}, 0.3, Enum.EasingStyle.Back)
+                        Tween(CircleStroke, {Color=Theme.Accent, Transparency=0.2}, 0.25)
                     else
-                        Tween(ToggleBG, {BackgroundColor3=Theme.Toggle}, 0.2)
-                        Tween(ToggleCircle, {Position=UDim2.new(0,2,0.5,-7),BackgroundColor3=Theme.TextDisabled}, 0.2)
+                        Tween(ToggleBG, {BackgroundColor3=Theme.Toggle}, 0.25, Enum.EasingStyle.Quint)
+                        Tween(ToggleStroke, {Color=Theme.Border, Transparency=0}, 0.25)
+                        Tween(ToggleCircle, {Position=UDim2.new(0,3,0.5,-8), BackgroundColor3=Theme.TextDisabled, Size=UDim2.new(0,16,0,16)}, 0.3, Enum.EasingStyle.Back)
+                        Tween(CircleStroke, {Color=Theme.Border, Transparency=0.5}, 0.25)
                     end
                     if not skipCb then callback(state) end
                 end
 
+                -- Squish on click
+                RowBtn.MouseButton1Down:Connect(function()
+                    Tween(ToggleCircle, {Size=UDim2.new(0,18,0,14)}, 0.1, Enum.EasingStyle.Quart)
+                end)
+                RowBtn.MouseButton1Up:Connect(function()
+                    Tween(ToggleCircle, {Size=UDim2.new(0,16,0,16)}, 0.15, Enum.EasingStyle.Back)
+                end)
+
                 SetState(state, true)
                 RowBtn.MouseButton1Click:Connect(function() SetState(not state) end)
-                RowBtn.MouseEnter:Connect(function() Tween(Row, {BackgroundColor3=Theme.GroupHeader}, 0.1) end)
-                RowBtn.MouseLeave:Connect(function() Tween(Row, {BackgroundColor3=Theme.ItemBG}, 0.1) end)
+                RowBtn.MouseEnter:Connect(function() Tween(ToggleStroke, {Transparency=0}, 0.15) end)
+                RowBtn.MouseLeave:Connect(function() if not state then Tween(ToggleStroke, {Transparency=0}, 0.15) end end)
 
                 function Toggle:SetValue(v) SetState(v, false) end
                 function Toggle:GetValue() return state end
@@ -485,30 +529,37 @@ function HollowLib:CreateWindow(config)
                 local callback = cfg.Callback or function() end
                 local dragging = false
 
-                local Container = MakeFrame(ItemContainer, UDim2.new(1,0,0,46), nil, Theme.ItemBG)
+                local Container = MakeFrame(ItemContainer, UDim2.new(1,0,0,48), nil, Theme.ItemBG)
                 Container.BackgroundTransparency = 1
-                MakeCorner(Container, Radius.Item) MakePadding(Container, 7, 7, 10, 10)
+                MakeCorner(Container, Radius.Item) MakePadding(Container, 8, 8, 10, 10)
 
                 local TopRow = MakeFrame(Container, UDim2.new(1,0,0,16), nil, Theme.ItemBG)
                 TopRow.BackgroundTransparency = 1
 
                 local SliderLabel = MakeLabel(TopRow, cfg.Text or id, 12, Theme.Text, Enum.Font.GothamMedium)
-                SliderLabel.Size = UDim2.new(0.7,0,1,0)
+                SliderLabel.Size = UDim2.new(0.65,0,1,0)
 
                 local ValueLabel = MakeLabel(TopRow, tostring(value)..suffix, 11, Theme.Accent, Enum.Font.GothamBold, Enum.TextXAlignment.Right)
-                ValueLabel.Size = UDim2.new(0.3,0,1,0) ValueLabel.Position = UDim2.new(0.7,0,0,0)
+                ValueLabel.Size = UDim2.new(0.35,0,1,0) ValueLabel.Position = UDim2.new(0.65,0,0,0)
 
-                local SliderBG = MakeFrame(Container, UDim2.new(1,0,0,6), UDim2.new(0,0,1,-10), Theme.SliderBG)
-                MakeCorner(SliderBG, Radius.Dot) MakeStroke(SliderBG, Theme.Border, 1)
+                -- Thicker track
+                local SliderBG = MakeFrame(Container, UDim2.new(1,0,0,8), UDim2.new(0,0,1,-12), Theme.SliderBG)
+                MakeCorner(SliderBG, 4) MakeStroke(SliderBG, Theme.Border, 1)
 
                 local alpha = (value-min)/(max-min)
+
+                -- Glowing fill
                 local SliderFill = MakeFrame(SliderBG, UDim2.new(alpha,0,1,0), nil, Theme.SliderFill)
-                MakeCorner(SliderFill, Radius.Dot)
+                MakeCorner(SliderFill, 4)
 
-                local SliderKnob = MakeFrame(SliderBG, UDim2.new(0,11,0,11), UDim2.new(alpha,-5,0.5,-5), Theme.Text)
-                MakeCorner(SliderKnob, 6) MakeStroke(SliderKnob, Theme.Accent, 1)
+                -- Bigger knob with accent glow
+                local SliderKnob = MakeFrame(SliderBG, UDim2.new(0,14,0,14), UDim2.new(alpha,-7,0.5,-7), Theme.Text)
+                MakeCorner(SliderKnob, 7)
+                local KnobStroke = Instance.new("UIStroke")
+                KnobStroke.Color = Theme.Accent KnobStroke.Thickness = 1.5
+                KnobStroke.Transparency = 0.3 KnobStroke.Parent = SliderKnob
 
-                local SliderBtn = MakeButton(SliderBG, UDim2.new(1,0,1,0), nil, Theme.Background)
+                local SliderBtn = MakeButton(SliderBG, UDim2.new(1,0,1,14), UDim2.new(0,0,0,-7), Theme.Background)
                 SliderBtn.BackgroundTransparency = 1 SliderBtn.ZIndex = 2
 
                 local function UpdateSlider(input)
@@ -517,28 +568,39 @@ function HollowLib:CreateWindow(config)
                     value = rounding == 0 and math.floor(value) or math.floor(value*(10^rounding)+0.5)/(10^rounding)
                     value = math.clamp(value, min, max)
                     local a = (value-min)/(max-min)
-                    Tween(SliderFill, {Size=UDim2.new(a,0,1,0)}, 0.05)
-                    Tween(SliderKnob, {Position=UDim2.new(a,-5,0.5,-5)}, 0.05)
+                    Tween(SliderFill, {Size=UDim2.new(a,0,1,0)}, 0.06, Enum.EasingStyle.Quart)
+                    Tween(SliderKnob, {Position=UDim2.new(a,-7,0.5,-7)}, 0.06, Enum.EasingStyle.Quart)
                     ValueLabel.Text = tostring(value)..suffix
                     callback(value)
                 end
 
-                SliderBtn.MouseButton1Down:Connect(function() dragging = true end)
+                -- Knob grows when dragging
+                SliderBtn.MouseButton1Down:Connect(function()
+                    dragging = true
+                    Tween(SliderKnob, {Size=UDim2.new(0,16,0,16)}, 0.1, Enum.EasingStyle.Back)
+                    Tween(KnobStroke, {Thickness=2, Transparency=0}, 0.1)
+                end)
                 SliderBtn.TouchTap:Connect(function(touches) if touches[1] then UpdateSlider(touches[1]) end end)
                 UserInputService.InputChanged:Connect(function(i)
                     if dragging and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then UpdateSlider(i) end
                 end)
                 UserInputService.InputEnded:Connect(function(i)
-                    if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then dragging=false end
+                    if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+                        if dragging then
+                            dragging = false
+                            Tween(SliderKnob, {Size=UDim2.new(0,14,0,14)}, 0.2, Enum.EasingStyle.Back)
+                            Tween(KnobStroke, {Thickness=1.5, Transparency=0.3}, 0.2)
+                        end
+                    end
                 end)
 
-                Container.MouseEnter:Connect(function() Tween(Container, {BackgroundColor3=Theme.GroupHeader}, 0.1) end)
-                Container.MouseLeave:Connect(function() Tween(Container, {BackgroundColor3=Theme.ItemBG}, 0.1) end)
+                Container.MouseEnter:Connect(function() Tween(KnobStroke, {Transparency=0.1}, 0.15) end)
+                Container.MouseLeave:Connect(function() if not dragging then Tween(KnobStroke, {Transparency=0.3}, 0.15) end end)
 
                 function Slider:SetValue(v)
                     value = math.clamp(v,min,max) local a=(value-min)/(max-min)
                     Tween(SliderFill,{Size=UDim2.new(a,0,1,0)},0.15)
-                    Tween(SliderKnob,{Position=UDim2.new(a,-5,0.5,-5)},0.15)
+                    Tween(SliderKnob,{Position=UDim2.new(a,-7,0.5,-7)},0.15)
                     ValueLabel.Text=tostring(value)..suffix callback(value)
                 end
                 function Slider:GetValue() return value end
@@ -552,28 +614,36 @@ function HollowLib:CreateWindow(config)
                 local text = cfg.Text or "Button"
                 local callback = cfg.Func or cfg.Callback or function() end
 
-                local Btn = MakeButton(ItemContainer, UDim2.new(1,0,0,32), nil, Theme.ItemBG)
+                local Btn = MakeButton(ItemContainer, UDim2.new(1,0,0,34), nil, Theme.ItemBG)
                 Btn.BackgroundTransparency = 1
-                MakeCorner(Btn, Radius.Item) MakeStroke(Btn, Theme.Border, 1)
+                MakeCorner(Btn, Radius.Item)
+                local BtnStroke = MakeStroke(Btn, Theme.Border, 1)
 
                 local BtnLabel = MakeLabel(Btn, text, 12, Theme.Text, Enum.Font.GothamMedium, Enum.TextXAlignment.Center)
                 BtnLabel.Size = UDim2.new(1,0,1,0) BtnLabel.TextYAlignment = Enum.TextYAlignment.Center
 
-                local AccentLeft = MakeFrame(Btn, UDim2.new(0,3,0,14), UDim2.new(0,0,0.5,-7), Theme.Accent)
-                MakeCorner(AccentLeft, 2) AccentLeft.BackgroundTransparency = 1
+                -- Bottom accent line (hidden, shows on hover)
+                local AccentBottom = MakeFrame(Btn, UDim2.new(0,0,0,2), UDim2.new(0.5,0,1,-3), Theme.Accent)
+                MakeCorner(AccentBottom, 1) AccentBottom.AnchorPoint = Vector2.new(0.5, 0)
 
                 Btn.MouseEnter:Connect(function()
-                    Tween(Btn,{BackgroundColor3=Theme.GroupHeader},0.1)
-                    Tween(AccentLeft,{BackgroundTransparency=0},0.1)
-                    Tween(BtnLabel,{TextColor3=Theme.Accent},0.1)
+                    Tween(BtnStroke, {Color=Theme.BorderBright, Transparency=0}, 0.15)
+                    Tween(BtnLabel, {TextColor3=Theme.Accent}, 0.15)
+                    Tween(AccentBottom, {Size=UDim2.new(0.5,0,0,2)}, 0.2, Enum.EasingStyle.Quint)
                 end)
                 Btn.MouseLeave:Connect(function()
-                    Tween(Btn,{BackgroundColor3=Theme.ItemBG},0.1)
-                    Tween(AccentLeft,{BackgroundTransparency=1},0.1)
-                    Tween(BtnLabel,{TextColor3=Theme.Text},0.1)
+                    Tween(BtnStroke, {Color=Theme.Border, Transparency=0}, 0.15)
+                    Tween(BtnLabel, {TextColor3=Theme.Text}, 0.15)
+                    Tween(AccentBottom, {Size=UDim2.new(0,0,0,2)}, 0.2, Enum.EasingStyle.Quint)
                 end)
-                Btn.MouseButton1Down:Connect(function() Tween(Btn,{BackgroundColor3=Theme.AccentDark},0.1) end)
-                Btn.MouseButton1Up:Connect(function() Tween(Btn,{BackgroundColor3=Theme.GroupHeader},0.1) end)
+                Btn.MouseButton1Down:Connect(function()
+                    Tween(BtnStroke, {Color=Theme.Accent, Transparency=0.2}, 0.08)
+                    Tween(BtnLabel, {TextSize=11}, 0.08, Enum.EasingStyle.Quart)
+                end)
+                Btn.MouseButton1Up:Connect(function()
+                    Tween(BtnStroke, {Color=Theme.BorderBright, Transparency=0}, 0.15)
+                    Tween(BtnLabel, {TextSize=12}, 0.15, Enum.EasingStyle.Back)
+                end)
                 Btn.MouseButton1Click:Connect(callback)
 
                 return Btn
@@ -923,33 +993,57 @@ function HollowLib:CreateWindow(config)
     local notifStack = {}
     function Window:Notify(text, duration)
         duration = duration or 3
-        if type(text) == "table" then text = (text.Title or "")..": "..(text.Description or "") end
+        local title = "Notification"
+        local desc = text
+        if type(text) == "table" then title = text.Title or "Notification" desc = text.Description or "" end
 
+        -- Push existing notifs up
         for _, nf in ipairs(notifStack) do
             local cur = nf.Position
-            Tween(nf, {Position=UDim2.new(cur.X.Scale,cur.X.Offset,cur.Y.Scale,cur.Y.Offset-42)}, 0.2)
+            Tween(nf, {Position=UDim2.new(cur.X.Scale,cur.X.Offset,cur.Y.Scale,cur.Y.Offset-56)}, 0.3, Enum.EasingStyle.Quint)
         end
 
-        local NotifFrame = MakeFrame(ScreenGui, UDim2.new(0,210,0,36), UDim2.new(1,10,1,-56), Theme.GroupBG)
-        NotifFrame.BackgroundTransparency = 0.3
-        MakeCorner(NotifFrame, Radius.Group) MakeStroke(NotifFrame, Theme.Border, 1)
-        local NotifBar = MakeFrame(NotifFrame, UDim2.new(0,3,1,-8), UDim2.new(0,0,0,4), Theme.Accent) MakeCorner(NotifBar, 2)
-        local NotifText = MakeLabel(NotifFrame, text, 10, Theme.Text, Enum.Font.GothamMedium)
-        NotifText.Size = UDim2.new(1,-14,1,0) NotifText.Position = UDim2.new(0,10,0,0)
-        NotifText.TextYAlignment = Enum.TextYAlignment.Center NotifText.TextWrapped = true
+        local NotifFrame = MakeFrame(ScreenGui, UDim2.new(0,260,0,50), UDim2.new(1,10,1,-64), Theme.GroupBG)
+        NotifFrame.BackgroundTransparency = 0.15
+        NotifFrame.ClipsDescendants = true
+        MakeCorner(NotifFrame, 12) MakeStroke(NotifFrame, Theme.BorderBright, 1)
+
+        -- Top accent line
+        local NotifAccent = MakeFrame(NotifFrame, UDim2.new(1,0,0,2), UDim2.new(0,0,0,0), Theme.Accent)
+
+        -- Title
+        local NotifTitle = MakeLabel(NotifFrame, title, 11, Theme.Text, Enum.Font.GothamBold)
+        NotifTitle.Size = UDim2.new(1,-20,0,16) NotifTitle.Position = UDim2.new(0,12,0,6)
+
+        -- Description
+        local NotifDesc = MakeLabel(NotifFrame, desc, 10, Theme.TextDim, Enum.Font.GothamMedium)
+        NotifDesc.Size = UDim2.new(1,-20,0,14) NotifDesc.Position = UDim2.new(0,12,0,22)
+        NotifDesc.TextWrapped = true
+
+        -- Timer drain bar at bottom
+        local TimerBar = MakeFrame(NotifFrame, UDim2.new(1,0,0,3), UDim2.new(0,0,1,-3), Theme.Accent)
+        TimerBar.BackgroundTransparency = 0.3
 
         table.insert(notifStack, 1, NotifFrame)
-        Tween(NotifFrame, {Position=UDim2.new(1,-220,1,-56)}, 0.3)
 
-        task.delay(duration, function()
-            Tween(NotifFrame, {Position=UDim2.new(1,10,1,-56)}, 0.3)
-            task.wait(0.35)
+        -- Slide in
+        Tween(NotifFrame, {Position=UDim2.new(1,-272,1,-64)}, 0.4, Enum.EasingStyle.Quint)
+
+        -- Drain the timer bar
+        task.delay(0.4, function()
+            Tween(TimerBar, {Size=UDim2.new(0,0,0,3)}, duration, Enum.EasingStyle.Linear)
+        end)
+
+        -- Slide out after duration
+        task.delay(duration + 0.4, function()
+            Tween(NotifFrame, {Position=UDim2.new(1,10,1,-64)}, 0.4, Enum.EasingStyle.Quint)
+            task.wait(0.45)
             for i, v in ipairs(notifStack) do if v == NotifFrame then table.remove(notifStack, i) break end end
             NotifFrame:Destroy()
         end)
     end
 
-    function Window:SetWatermark(text) WatermarkText.Text = text end
+    function Window:SetWatermark(text) WMName.Text = text end
     function Window:SetWatermarkVisibility(visible) Watermark.Visible = visible end
     function Window:Unload()
         ScreenGui:Destroy()
