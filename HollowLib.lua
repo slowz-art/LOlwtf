@@ -321,7 +321,7 @@ function HollowLib:CreateWindow(config)
     local frameCount, frameTimer, fps = 0, tick(), 60
     local statsOk, stats = pcall(function() return game:GetService("Stats") end)
     RunService.RenderStepped:Connect(function()
-        frameCount += 1
+        frameCount = frameCount + 1
         if tick() - frameTimer >= 1 then fps = frameCount frameCount = 0 frameTimer = tick() end
         local ping = 0
         pcall(function()
