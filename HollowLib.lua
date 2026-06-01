@@ -235,10 +235,14 @@ function HollowLib:CreateWindow(config)
     local Content = MakeFrame(Main, UDim2.new(1,0,1,-34), UDim2.new(0,0,0,34), Theme.Background)
     Content.Name = "HollowContent"
     Content.BackgroundTransparency = 1
+    Content.ClipsDescendants = true
+    MakeCorner(Content, Radius.Window)
 
     -- Sidebar
     local Sidebar = MakeFrame(Content, UDim2.new(0,124,1,0), nil, Theme.Sidebar)
     Sidebar.BackgroundTransparency = 1
+    Sidebar.ClipsDescendants = true
+    MakeCorner(Sidebar, Radius.Window)
     MakeStroke(Sidebar, Theme.Border, 1)
 
     local SideTitle = MakeLabel(Sidebar, "NAVIGATION", 9, Theme.TextDisabled, Enum.Font.GothamBold)
@@ -264,46 +268,6 @@ function HollowLib:CreateWindow(config)
     local TabContent = MakeFrame(Content, UDim2.new(1,-124,1,0), UDim2.new(0,124,0,0), Theme.Background)
     TabContent.BackgroundTransparency = 1
     TabContent.ClipsDescendants = true
-
-    -- ===== RESIZE HANDLE =====
-    local ResizeHandle = MakeButton(Main, UDim2.new(0,18,0,18), UDim2.new(1,-18,1,-18), Theme.Background)
-    ResizeHandle.BackgroundTransparency = 1
-    ResizeHandle.ZIndex = 10
-
-    local dotPositions = {
-        {10,2},{14,2},{18,2},
-        {10,6},{14,6},{18,6},
-        {10,10},{14,10},{18,10},
-    }
-    for i, pos in ipairs(dotPositions) do
-        if i > 3 or pos[1] > 10 then
-            local dot = MakeFrame(ResizeHandle, UDim2.new(0,2,0,2), UDim2.new(1,-pos[1],1,-pos[2]), Theme.TextDisabled)
-            MakeCorner(dot, 1) dot.ZIndex = 11
-        end
-    end
-
-    local resizing = false
-    local resizeStart, startW, startH
-
-    ResizeHandle.InputBegan:Connect(function(i)
-        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-            resizing = true resizeStart = i.Position
-            startW = Main.AbsoluteSize.X startH = Main.AbsoluteSize.Y
-        end
-    end)
-    UserInputService.InputChanged:Connect(function(i)
-        if resizing and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-            local d = i.Position - resizeStart
-            curW = math.max(minW, startW + d.X)
-            curH = math.max(minH, startH + d.Y)
-            Main.Size = UDim2.new(0, curW, 0, curH)
-        end
-    end)
-    UserInputService.InputEnded:Connect(function(i)
-        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-            resizing = false
-        end
-    end)
 
     -- ===== WATERMARK =====
     local Watermark = MakeFrame(ScreenGui, UDim2.new(0, isMobile and 160 or 220, 0, 24), UDim2.new(0,12,0,12), Theme.Watermark)
@@ -642,9 +606,14 @@ function HollowLib:CreateWindow(config)
                 local SelectedLabel = MakeLabel(Header, tostring(selected), 11, Theme.Text, Enum.Font.GothamMedium)
                 SelectedLabel.Size = UDim2.new(1,-30,0,13) SelectedLabel.Position = UDim2.new(0,10,0,15)
 
-                local DropArrow = MakeLabel(Header, "▾", 13, Theme.TextDim, Enum.Font.GothamBold, Enum.TextXAlignment.Right)
-                DropArrow.Size = UDim2.new(0,20,1,0) DropArrow.Position = UDim2.new(1,-22,0,0)
-                DropArrow.TextYAlignment = Enum.TextYAlignment.Center
+                local DropArrow = Instance.new("ImageLabel")
+                DropArrow.Size = UDim2.new(0,14,0,14)
+                DropArrow.Position = UDim2.new(1,-20,0.5,-7)
+                DropArrow.BackgroundTransparency = 1
+                DropArrow.Image = "rbxassetid://6031091004"
+                DropArrow.ImageColor3 = Theme.TextDim
+                DropArrow.ScaleType = Enum.ScaleType.Fit
+                DropArrow.Parent = Header
 
                 local OptionList = MakeFrame(Container, UDim2.new(1,0,0,0), UDim2.new(0,0,0,36), Theme.DropOpen)
                 OptionList.BackgroundTransparency = 1
@@ -723,7 +692,7 @@ function HollowLib:CreateWindow(config)
                 return Div
             end
 
-            -- ADD COLOR PICKER
+            -- ADD COLOR PICKER (Modern 2D: SV square + Hue bar)
             function Group:AddColorPicker(id, cfg)
                 local ColorPicker = {}
                 local color = cfg.Default or Color3.fromRGB(255,255,255)
@@ -740,65 +709,140 @@ function HollowLib:CreateWindow(config)
                 local ColorBtn = MakeButton(Container, UDim2.new(0,36,0,18), UDim2.new(1,-38,0.5,-9), color)
                 MakeCorner(ColorBtn, Radius.Small) MakeStroke(ColorBtn, Theme.BorderBright, 1)
 
-                local PickerPopup = MakeFrame(ScreenGui, UDim2.new(0,190,0,210), UDim2.new(0,0,0,0), Theme.GroupBG)
+                -- Popup
+                local popupW, popupH = 220, 260
+                local PickerPopup = MakeFrame(ScreenGui, UDim2.new(0,popupW,0,popupH), UDim2.new(0,0,0,0), Theme.GroupBG)
                 PickerPopup.Visible = false PickerPopup.ZIndex = 100
+                PickerPopup.BackgroundTransparency = 0.1
                 MakeCorner(PickerPopup, Radius.Group) MakeStroke(PickerPopup, Theme.BorderBright, 1)
-                MakePadding(PickerPopup, 8, 8, 8, 8) MakeList(PickerPopup, 5)
 
                 local PickerTitle = MakeLabel(PickerPopup, cfg.Title or "Color Picker", 11, Theme.Text, Enum.Font.GothamBold)
-                PickerTitle.Size = UDim2.new(1,0,0,14)
+                PickerTitle.Size = UDim2.new(1,0,0,20) PickerTitle.Position = UDim2.new(0,10,0,6)
 
-                local HueLabel = MakeLabel(PickerPopup, "Hue", 9, Theme.TextDim, Enum.Font.Gotham) HueLabel.Size = UDim2.new(1,0,0,11)
-                local HueBG = MakeFrame(PickerPopup, UDim2.new(1,0,0,12), nil, Theme.SliderBG) HueBG.ZIndex=101 MakeCorner(HueBG,Radius.Dot)
+                -- SV Square (saturation X, value Y)
+                local svSize = 170
+                local SVFrame = MakeFrame(PickerPopup, UDim2.new(0,svSize,0,svSize), UDim2.new(0,10,0,28), Color3.fromHSV(0,1,1))
+                SVFrame.ZIndex = 101
+                MakeCorner(SVFrame, 6) SVFrame.ClipsDescendants = true
+
+                -- White gradient left to right (saturation)
+                local WhiteGrad = MakeFrame(SVFrame, UDim2.new(1,0,1,0), nil, Color3.new(1,1,1))
+                WhiteGrad.ZIndex = 102
+                local wGrad = Instance.new("UIGradient")
+                wGrad.Color = ColorSequence.new(Color3.new(1,1,1), Color3.new(1,1,1))
+                wGrad.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,1)})
+                wGrad.Parent = WhiteGrad
+
+                -- Black gradient top to bottom (value)
+                local BlackGrad = MakeFrame(SVFrame, UDim2.new(1,0,1,0), nil, Color3.new(0,0,0))
+                BlackGrad.ZIndex = 103
+                local bGrad = Instance.new("UIGradient")
+                bGrad.Color = ColorSequence.new(Color3.new(0,0,0), Color3.new(0,0,0))
+                bGrad.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0,1), NumberSequenceKeypoint.new(1,0)})
+                bGrad.Rotation = 90
+                bGrad.Parent = BlackGrad
+
+                -- SV Cursor (circle)
+                local SVCursor = MakeFrame(SVFrame, UDim2.new(0,12,0,12), UDim2.new(0,0,0,0), Color3.new(1,1,1))
+                SVCursor.ZIndex = 105
+                MakeCorner(SVCursor, 6) MakeStroke(SVCursor, Color3.new(0,0,0), 2)
+
+                -- SV drag button
+                local SVBtn = MakeButton(SVFrame, UDim2.new(1,0,1,0), nil, Theme.Background)
+                SVBtn.BackgroundTransparency = 1 SVBtn.ZIndex = 104
+
+                -- Hue bar (vertical, right side)
+                local HueBar = MakeFrame(PickerPopup, UDim2.new(0,20,0,svSize), UDim2.new(0,svSize+16,0,28), Color3.new(1,0,0))
+                HueBar.ZIndex = 101
+                MakeCorner(HueBar, 4) HueBar.ClipsDescendants = true
                 local HueGrad = Instance.new("UIGradient")
-                HueGrad.Color = ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromHSV(0,1,1)),ColorSequenceKeypoint.new(0.167,Color3.fromHSV(0.167,1,1)),ColorSequenceKeypoint.new(0.333,Color3.fromHSV(0.333,1,1)),ColorSequenceKeypoint.new(0.5,Color3.fromHSV(0.5,1,1)),ColorSequenceKeypoint.new(0.667,Color3.fromHSV(0.667,1,1)),ColorSequenceKeypoint.new(0.833,Color3.fromHSV(0.833,1,1)),ColorSequenceKeypoint.new(1,Color3.fromHSV(1,1,1))})
-                HueGrad.Parent = HueBG
-                local HueKnob = MakeFrame(HueBG,UDim2.new(0,10,1,4),UDim2.new(0,-5,0,-2),Theme.Text) MakeCorner(HueKnob,Radius.Dot) MakeStroke(HueKnob,Theme.Border,1) HueKnob.ZIndex=102
+                HueGrad.Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0,Color3.fromHSV(0,1,1)),
+                    ColorSequenceKeypoint.new(0.167,Color3.fromHSV(0.167,1,1)),
+                    ColorSequenceKeypoint.new(0.333,Color3.fromHSV(0.333,1,1)),
+                    ColorSequenceKeypoint.new(0.5,Color3.fromHSV(0.5,1,1)),
+                    ColorSequenceKeypoint.new(0.667,Color3.fromHSV(0.667,1,1)),
+                    ColorSequenceKeypoint.new(0.833,Color3.fromHSV(0.833,1,1)),
+                    ColorSequenceKeypoint.new(1,Color3.fromHSV(1,1,1))
+                })
+                HueGrad.Rotation = 90
+                HueGrad.Parent = HueBar
 
-                local SatLabel = MakeLabel(PickerPopup,"Saturation",9,Theme.TextDim,Enum.Font.Gotham) SatLabel.Size=UDim2.new(1,0,0,11)
-                local SatBG = MakeFrame(PickerPopup,UDim2.new(1,0,0,12),nil,Theme.SliderBG) SatBG.ZIndex=101 MakeCorner(SatBG,Radius.Dot)
-                local SatFill = MakeFrame(SatBG,UDim2.new(1,0,1,0),nil,Theme.Accent) MakeCorner(SatFill,Radius.Dot)
-                local SatKnob = MakeFrame(SatBG,UDim2.new(0,10,1,4),UDim2.new(1,-5,0,-2),Theme.Text) MakeCorner(SatKnob,Radius.Dot) MakeStroke(SatKnob,Theme.Border,1) SatKnob.ZIndex=102
+                -- Hue cursor
+                local HueCursor = MakeFrame(HueBar, UDim2.new(1,4,0,6), UDim2.new(0,-2,0,0), Color3.new(1,1,1))
+                HueCursor.ZIndex = 106
+                MakeCorner(HueCursor, 3) MakeStroke(HueCursor, Color3.new(0,0,0), 1)
 
-                local ValLabel = MakeLabel(PickerPopup,"Value",9,Theme.TextDim,Enum.Font.Gotham) ValLabel.Size=UDim2.new(1,0,0,11)
-                local ValBG = MakeFrame(PickerPopup,UDim2.new(1,0,0,12),nil,Theme.SliderBG) ValBG.ZIndex=101 MakeCorner(ValBG,Radius.Dot)
-                local ValFill = MakeFrame(ValBG,UDim2.new(1,0,1,0),nil,Theme.Text) MakeCorner(ValFill,Radius.Dot)
-                local ValKnob = MakeFrame(ValBG,UDim2.new(0,10,1,4),UDim2.new(1,-5,0,-2),Theme.Text) MakeCorner(ValKnob,Radius.Dot) MakeStroke(ValKnob,Theme.Border,1) ValKnob.ZIndex=102
+                local HueBtn = MakeButton(HueBar, UDim2.new(1,0,1,0), nil, Theme.Background)
+                HueBtn.BackgroundTransparency = 1 HueBtn.ZIndex = 105
+
+                -- Hex display row
+                local HexRow = MakeFrame(PickerPopup, UDim2.new(0,popupW-20,0,24), UDim2.new(0,10,0,svSize+36), Theme.DropBG)
+                HexRow.ZIndex = 101
+                MakeCorner(HexRow, 5) MakeStroke(HexRow, Theme.Border, 1)
+
+                local HexLabel = MakeLabel(HexRow, "#ffffff", 10, Theme.Text, Enum.Font.GothamMedium, Enum.TextXAlignment.Center)
+                HexLabel.Size = UDim2.new(0.5,0,1,0) HexLabel.ZIndex = 102
+                HexLabel.TextYAlignment = Enum.TextYAlignment.Center
+
+                local RGBLabel = MakeLabel(HexRow, "255, 255, 255", 10, Theme.TextDim, Enum.Font.Gotham, Enum.TextXAlignment.Center)
+                RGBLabel.Size = UDim2.new(0.5,0,1,0) RGBLabel.Position = UDim2.new(0.5,0,0,0)
+                RGBLabel.ZIndex = 102 RGBLabel.TextYAlignment = Enum.TextYAlignment.Center
+
+                -- Preview swatch
+                local PreviewSwatch = MakeFrame(PickerPopup, UDim2.new(0,popupW-20,0,16), UDim2.new(0,10,0,svSize+64), color)
+                PreviewSwatch.ZIndex = 101
+                MakeCorner(PreviewSwatch, 4) MakeStroke(PreviewSwatch, Theme.Border, 1)
 
                 local hue, sat, val = Color3.toHSV(color)
 
                 local function UpdateColor()
-                    color = Color3.fromHSV(hue,sat,val) ColorBtn.BackgroundColor3=color
-                    SatFill.BackgroundColor3=Color3.fromHSV(hue,1,1)
-                    HueKnob.Position=UDim2.new(hue,-5,0,-2) SatKnob.Position=UDim2.new(sat,-5,0,-2) ValKnob.Position=UDim2.new(val,-5,0,-2)
+                    color = Color3.fromHSV(hue,sat,val)
+                    ColorBtn.BackgroundColor3 = color
+                    SVFrame.BackgroundColor3 = Color3.fromHSV(hue,1,1)
+                    SVCursor.Position = UDim2.new(sat,-6,(1-val),-6)
+                    HueCursor.Position = UDim2.new(0,-2,hue,-3)
+                    PreviewSwatch.BackgroundColor3 = color
+                    local r = math.floor(color.R*255)
+                    local g = math.floor(color.G*255)
+                    local b = math.floor(color.B*255)
+                    HexLabel.Text = string.format("#%02x%02x%02x", r, g, b)
+                    RGBLabel.Text = r..", "..g..", "..b
                     callback(color)
                 end
 
-                local function MakeSliderDrag(bg, knob, onChange)
-                    local drag = false
-                    local dragBtn = MakeButton(bg, UDim2.new(1,0,1,0), nil, Theme.Background)
-                    dragBtn.BackgroundTransparency=1 dragBtn.ZIndex=103
-                    dragBtn.MouseButton1Down:Connect(function() drag=true end)
-                    UserInputService.InputChanged:Connect(function(input)
-                        if drag and (input.UserInputType==Enum.UserInputType.MouseMovement or input.UserInputType==Enum.UserInputType.Touch) then
-                            local rel=math.clamp((input.Position.X-bg.AbsolutePosition.X)/bg.AbsoluteSize.X,0,1)
-                            onChange(rel) UpdateColor()
-                        end
-                    end)
-                    UserInputService.InputEnded:Connect(function(input)
-                        if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then drag=false end
-                    end)
-                end
+                -- SV drag
+                local svDrag = false
+                SVBtn.MouseButton1Down:Connect(function() svDrag = true end)
+                UserInputService.InputChanged:Connect(function(input)
+                    if svDrag and (input.UserInputType==Enum.UserInputType.MouseMovement or input.UserInputType==Enum.UserInputType.Touch) then
+                        sat = math.clamp((input.Position.X - SVFrame.AbsolutePosition.X) / SVFrame.AbsoluteSize.X, 0, 1)
+                        val = 1 - math.clamp((input.Position.Y - SVFrame.AbsolutePosition.Y) / SVFrame.AbsoluteSize.Y, 0, 1)
+                        UpdateColor()
+                    end
+                end)
+                UserInputService.InputEnded:Connect(function(input)
+                    if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then svDrag=false end
+                end)
 
-                MakeSliderDrag(HueBG, HueKnob, function(v) hue=v end)
-                MakeSliderDrag(SatBG, SatKnob, function(v) sat=v end)
-                MakeSliderDrag(ValBG, ValKnob, function(v) val=v end)
+                -- Hue drag
+                local hueDrag = false
+                HueBtn.MouseButton1Down:Connect(function() hueDrag = true end)
+                UserInputService.InputChanged:Connect(function(input)
+                    if hueDrag and (input.UserInputType==Enum.UserInputType.MouseMovement or input.UserInputType==Enum.UserInputType.Touch) then
+                        hue = math.clamp((input.Position.Y - HueBar.AbsolutePosition.Y) / HueBar.AbsoluteSize.Y, 0, 1)
+                        UpdateColor()
+                    end
+                end)
+                UserInputService.InputEnded:Connect(function(input)
+                    if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then hueDrag=false end
+                end)
 
                 ColorBtn.MouseButton1Click:Connect(function()
                     pickerOpen = not pickerOpen PickerPopup.Visible = pickerOpen
                     if pickerOpen then
                         local ap = ColorBtn.AbsolutePosition
-                        PickerPopup.Position = UDim2.new(0,ap.X-200,0,ap.Y-10)
+                        PickerPopup.Position = UDim2.new(0, ap.X - popupW - 10, 0, ap.Y - 40)
                     end
                 end)
 
