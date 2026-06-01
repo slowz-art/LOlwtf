@@ -209,9 +209,17 @@ function HollowLib:CreateWindow(config)
     MakeCorner(Topbar, 8)
     local TopFix = MakeFrame(Topbar, UDim2.new(1, 0, 0.5, 0), UDim2.new(0, 0, 0.5, 0), Theme.Sidebar)
 
-    -- Logo dot
-    local LogoDot = MakeFrame(Topbar, UDim2.new(0, 8, 0, 8), UDim2.new(0, 12, 0.5, -4), Theme.Accent)
-    MakeCorner(LogoDot, 4)
+    -- Custom Logo Image
+    local LogoImg = Instance.new("ImageLabel")
+    LogoImg.Image = "rbxassetid://109250647122928"
+    LogoImg.Size = UDim2.new(0, 20, 0, 20)
+    LogoImg.Position = UDim2.new(0, 10, 0.5, -10)
+    LogoImg.BackgroundTransparency = 1
+    LogoImg.Parent = Topbar
+
+    -- Apply texture (if needed)
+    LogoImg.ScaleType = Enum.ScaleType.Fit
+    LogoImg.TileSize = UDim2.new(0, 87465223885645, 0, 87465223885645)
 
     -- Title
     local TitleLabel = MakeLabel(Topbar, config.Title or "HollowLib", 13, Theme.Text, Enum.Font.GothamBold)
@@ -1089,6 +1097,3 @@ function HollowLib:CreateWindow(config)
     end
 
     return Window
-end
-
-return HollowLib
