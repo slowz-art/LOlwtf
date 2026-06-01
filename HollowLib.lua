@@ -188,7 +188,16 @@ function HollowLib:CreateWindow(config)
     local minimized = false
     MinBtn.MouseButton1Click:Connect(function()
         minimized = not minimized
-        Tween(Main, {Size=UDim2.new(0,curW,0,minimized and 34 or curH)}, 0.3)
+        local ContentFrame = Main:FindFirstChild("HollowContent")
+        if minimized then
+            if ContentFrame then ContentFrame.Visible = false end
+            Tween(Main, {Size=UDim2.new(0,curW,0,34)}, 0.3)
+        else
+            Tween(Main, {Size=UDim2.new(0,curW,0,curH)}, 0.3)
+            task.delay(0.15, function()
+                if ContentFrame then ContentFrame.Visible = true end
+            end)
+        end
     end)
 
     -- Mobile only buttons
@@ -230,28 +239,28 @@ function HollowLib:CreateWindow(config)
     Content.Name = "HollowContent"
 
     -- Sidebar
-    local Sidebar = MakeFrame(Content, UDim2.new(0,120,1,0), nil, Theme.Sidebar)
+    local Sidebar = MakeFrame(Content, UDim2.new(0,124,1,0), nil, Theme.Sidebar)
     MakeStroke(Sidebar, Theme.Border, 1)
 
     local SideTitle = MakeLabel(Sidebar, "NAVIGATION", 9, Theme.TextDisabled, Enum.Font.GothamBold)
-    SideTitle.Size = UDim2.new(1,-14,0,18) SideTitle.Position = UDim2.new(0,8,0,8)
+    SideTitle.Size = UDim2.new(1,-20,0,18) SideTitle.Position = UDim2.new(0,12,0,10)
 
-    local TabList = MakeFrame(Sidebar, UDim2.new(1,0,1,-42), UDim2.new(0,0,0,28), Theme.Sidebar)
+    local TabList = MakeFrame(Sidebar, UDim2.new(1,0,1,-46), UDim2.new(0,0,0,32), Theme.Sidebar)
     TabList.ClipsDescendants = true
-    MakeList(TabList, 2) MakePadding(TabList, 4, 4, 6, 6)
+    MakeList(TabList, 5) MakePadding(TabList, 4, 6, 10, 10)
 
     -- Player info
-    local PlayerInfo = MakeFrame(Sidebar, UDim2.new(1,0,0,38), UDim2.new(0,0,1,-38), Theme.Sidebar)
-    MakeStroke(PlayerInfo, Theme.Border, 1) MakePadding(PlayerInfo, 5, 5, 8, 8)
+    local PlayerInfo = MakeFrame(Sidebar, UDim2.new(1,0,0,40), UDim2.new(0,0,1,-40), Theme.Sidebar)
+    MakeStroke(PlayerInfo, Theme.Border, 1) MakePadding(PlayerInfo, 6, 6, 10, 10)
     local PlayerAvatar = MakeImage(PlayerInfo, "https://www.roblox.com/headshot-thumbnail/image?userId="..LocalPlayer.UserId.."&width=48&height=48&format=png", UDim2.new(0,22,0,22), UDim2.new(0,0,0.5,-11))
     MakeCorner(PlayerAvatar, 11)
     local PlayerName = MakeLabel(PlayerInfo, LocalPlayer.DisplayName, 10, Theme.Text, Enum.Font.GothamMedium)
-    PlayerName.Size = UDim2.new(1,-30,0,13) PlayerName.Position = UDim2.new(0,28,0,5)
+    PlayerName.Size = UDim2.new(1,-30,0,13) PlayerName.Position = UDim2.new(0,28,0,6)
     local PlayerUser = MakeLabel(PlayerInfo, "@"..LocalPlayer.Name, 9, Theme.TextDisabled, Enum.Font.Gotham)
-    PlayerUser.Size = UDim2.new(1,-30,0,12) PlayerUser.Position = UDim2.new(0,28,0,19)
+    PlayerUser.Size = UDim2.new(1,-30,0,12) PlayerUser.Position = UDim2.new(0,28,0,20)
 
     -- Tab content area
-    local TabContent = MakeFrame(Content, UDim2.new(1,-120,1,0), UDim2.new(0,120,0,0), Theme.Background)
+    local TabContent = MakeFrame(Content, UDim2.new(1,-124,1,0), UDim2.new(0,124,0,0), Theme.Background)
     TabContent.ClipsDescendants = true
 
     -- ===== RESIZE HANDLE =====
