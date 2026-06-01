@@ -144,17 +144,15 @@ function HollowLib:CreateWindow(config)
     MakeFrame(Topbar, UDim2.new(1,0,0.5,0), UDim2.new(0,0,0.5,0), Theme.Sidebar)
 
     -- Logo
-    local LogoContainer = MakeFrame(Topbar, UDim2.new(0,28,0,28), UDim2.new(0,6,0.5,-14), Theme.Sidebar)
-    MakeCorner(LogoContainer, 6)
-    LogoContainer.ClipsDescendants = true
     local LogoImg = Instance.new("ImageLabel")
     LogoImg.Image = "rbxassetid://87465223885645"
-    LogoImg.Size = UDim2.new(1,4,1,4)
-    LogoImg.Position = UDim2.new(0,-2,0,-2)
+    LogoImg.Size = UDim2.new(0,32,0,32)
+    LogoImg.Position = UDim2.new(0,6,0.5,-16)
     LogoImg.BackgroundTransparency = 1
-    LogoImg.ScaleType = Enum.ScaleType.Crop
+    LogoImg.BorderSizePixel = 0
+    LogoImg.ScaleType = Enum.ScaleType.Fit
     LogoImg.ImageColor3 = Color3.fromRGB(255,255,255)
-    LogoImg.Parent = LogoContainer
+    LogoImg.Parent = Topbar
 
     -- Title
     local TitleLabel = MakeLabel(Topbar, config.Title or "HollowLib", 13, Theme.Text, Enum.Font.GothamBold)
