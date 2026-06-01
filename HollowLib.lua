@@ -221,6 +221,8 @@ function HollowLib:CreateWindow(config)
     LogoImg.ScaleType = Enum.ScaleType.Fit
     LogoImg.TileSize = UDim2.new(0, 87465223885645, 0, 87465223885645)
 
+    
+    
     -- Title
     local TitleLabel = MakeLabel(Topbar, config.Title or "HollowLib", 13, Theme.Text, Enum.Font.GothamBold)
     TitleLabel.Size = UDim2.new(1, -80, 1, 0)
@@ -1097,3 +1099,6 @@ function HollowLib:CreateWindow(config)
     end
 
     return Window
+end
+
+return HollowLib
