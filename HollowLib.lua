@@ -161,8 +161,8 @@ function HollowLib:CreateWindow(config)
     local LogoImg = Instance.new("ImageLabel")
     LogoImg.Name = "Logo"
     LogoImg.Image = "rbxassetid://87465223885645"
-    LogoImg.Size = UDim2.new(0,30,0,30)
-    LogoImg.Position = UDim2.new(0,5,0,2)
+    LogoImg.Size = UDim2.new(0,38,0,38)
+    LogoImg.Position = UDim2.new(0,4,0.5,-19)
     LogoImg.BackgroundTransparency = 1
     LogoImg.BorderSizePixel = 0
     LogoImg.ScaleType = Enum.ScaleType.Fit
@@ -171,7 +171,7 @@ function HollowLib:CreateWindow(config)
     -- Title
     local TitleLabel = MakeLabel(Topbar, config.Title or "HollowLib", 13, Theme.Text, Enum.Font.GothamBold)
     TitleLabel.Size = UDim2.new(1, isMobile and -140 or -100, 1, 0)
-    TitleLabel.Position = UDim2.new(0, 42, 0, 0) TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
+    TitleLabel.Position = UDim2.new(0, 46, 0, 0) TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
 
     -- Topbar buttons helper
     local topBtnOffset = -30
@@ -360,7 +360,7 @@ function HollowLib:CreateWindow(config)
         TabScroll.ScrollBarThickness = 3 TabScroll.ScrollBarImageColor3 = Theme.ScrollBar
         TabScroll.CanvasSize = UDim2.new(0,0,0,0) TabScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
         TabScroll.Parent = TabPage
-        MakePadding(TabScroll, 8, 12, 8, 8)
+        MakePadding(TabScroll, 10, 14, 12, 12)
 
         -- Two column container
         local ColHolder = MakeFrame(TabScroll, UDim2.new(1,0,0,0), nil, Theme.Background, 1)
@@ -368,16 +368,16 @@ function HollowLib:CreateWindow(config)
 
         local ColLayout = Instance.new("UIListLayout")
         ColLayout.FillDirection = Enum.FillDirection.Horizontal
-        ColLayout.Padding = UDim.new(0, 5)
+        ColLayout.Padding = UDim.new(0, 12)
         ColLayout.SortOrder = Enum.SortOrder.LayoutOrder
         ColLayout.VerticalAlignment = Enum.VerticalAlignment.Top
         ColLayout.Parent = ColHolder
 
-        local LeftCol = MakeFrame(ColHolder, UDim2.new(0.5,-3,0,0), nil, Theme.Background, 1)
+        local LeftCol = MakeFrame(ColHolder, UDim2.new(0.5,-6,0,0), nil, Theme.Background, 1)
         LeftCol.AutomaticSize = Enum.AutomaticSize.Y
         MakeList(LeftCol, 10)
 
-        local RightCol = MakeFrame(ColHolder, UDim2.new(0.5,-3,0,0), nil, Theme.Background, 1)
+        local RightCol = MakeFrame(ColHolder, UDim2.new(0.5,-6,0,0), nil, Theme.Background, 1)
         RightCol.AutomaticSize = Enum.AutomaticSize.Y
         MakeList(RightCol, 10)
 
