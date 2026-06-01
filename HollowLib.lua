@@ -129,7 +129,7 @@ function HollowLib:CreateWindow(config)
     -- Main Frame
     local Main = MakeFrame(ScreenGui, UDim2.new(0,curW,0,curH), UDim2.new(0.5,-curW/2,0.5,-curH/2), Theme.Background)
     Main.Name = "HollowWindow" Main.ClipsDescendants = false
-    Main.BackgroundTransparency = 0.15
+    Main.BackgroundTransparency = 0.35
     MakeCorner(Main, Radius.Window) MakeStroke(Main, Theme.Border, 1)
 
     -- Shadow
@@ -144,7 +144,7 @@ function HollowLib:CreateWindow(config)
     Topbar.Size = UDim2.new(1,0,0,34)
     Topbar.Position = UDim2.new(0,0,0,0)
     Topbar.BackgroundColor3 = Theme.Sidebar
-    Topbar.BackgroundTransparency = 0.1
+    Topbar.BackgroundTransparency = 0.25
     Topbar.BorderSizePixel = 0
     Topbar.Parent = Main
     MakeCorner(Topbar, Radius.Window)
@@ -153,7 +153,7 @@ function HollowLib:CreateWindow(config)
     TopbarFill.Size = UDim2.new(1,0,0.5,0)
     TopbarFill.Position = UDim2.new(0,0,0.5,0)
     TopbarFill.BackgroundColor3 = Theme.Sidebar
-    TopbarFill.BackgroundTransparency = 0.1
+    TopbarFill.BackgroundTransparency = 0.25
     TopbarFill.BorderSizePixel = 0
     TopbarFill.Parent = Topbar
 
@@ -233,11 +233,11 @@ function HollowLib:CreateWindow(config)
     -- Content
     local Content = MakeFrame(Main, UDim2.new(1,0,1,-34), UDim2.new(0,0,0,34), Theme.Background)
     Content.Name = "HollowContent"
-    Content.BackgroundTransparency = 0.15
+    Content.BackgroundTransparency = 1
 
     -- Sidebar
     local Sidebar = MakeFrame(Content, UDim2.new(0,124,1,0), nil, Theme.Sidebar)
-    Sidebar.BackgroundTransparency = 0.1
+    Sidebar.BackgroundTransparency = 0.3
     MakeStroke(Sidebar, Theme.Border, 1)
 
     local SideTitle = MakeLabel(Sidebar, "NAVIGATION", 9, Theme.TextDisabled, Enum.Font.GothamBold)
@@ -250,7 +250,7 @@ function HollowLib:CreateWindow(config)
 
     -- Player info
     local PlayerInfo = MakeFrame(Sidebar, UDim2.new(1,0,0,40), UDim2.new(0,0,1,-40), Theme.Sidebar)
-    PlayerInfo.BackgroundTransparency = 0.1
+    PlayerInfo.BackgroundTransparency = 0.3
     MakeStroke(PlayerInfo, Theme.Border, 1) MakePadding(PlayerInfo, 6, 6, 10, 10)
     local PlayerAvatar = MakeImage(PlayerInfo, "https://www.roblox.com/headshot-thumbnail/image?userId="..LocalPlayer.UserId.."&width=48&height=48&format=png", UDim2.new(0,22,0,22), UDim2.new(0,0,0.5,-11))
     MakeCorner(PlayerAvatar, 11)
@@ -306,7 +306,7 @@ function HollowLib:CreateWindow(config)
 
     -- ===== WATERMARK =====
     local Watermark = MakeFrame(ScreenGui, UDim2.new(0, isMobile and 160 or 220, 0, 24), UDim2.new(0,12,0,12), Theme.Watermark)
-    Watermark.BackgroundTransparency = 0.2
+    Watermark.BackgroundTransparency = 0.35
     MakeCorner(Watermark, Radius.Small) MakeStroke(Watermark, Theme.Border, 1)
 
     local WMBar = MakeFrame(Watermark, UDim2.new(0,3,0,14), UDim2.new(0,0,0.5,-7), Theme.Accent)
@@ -354,6 +354,7 @@ function HollowLib:CreateWindow(config)
 
         -- Tab page with TWO COLUMN layout
         local TabPage = MakeFrame(TabContent, UDim2.new(1,0,1,0), nil, Theme.Background)
+        TabPage.BackgroundTransparency = 1
         TabPage.Visible = false TabPage.ClipsDescendants = true
 
         local TabScroll = Instance.new("ScrollingFrame")
@@ -439,15 +440,15 @@ function HollowLib:CreateWindow(config)
 
             local GroupFrame = MakeFrame(col, UDim2.new(1,0,0,0), nil, Theme.GroupBG)
             GroupFrame.AutomaticSize = Enum.AutomaticSize.Y
-            GroupFrame.BackgroundTransparency = 0.15
+            GroupFrame.BackgroundTransparency = 0.35
             MakeCorner(GroupFrame, Radius.Group) MakeStroke(GroupFrame, Theme.Border, 1)
             GroupFrame.ClipsDescendants = false
 
             local Header = MakeFrame(GroupFrame, UDim2.new(1,0,0,28), nil, Theme.GroupHeader)
-            Header.BackgroundTransparency = 0.1
+            Header.BackgroundTransparency = 0.3
             MakeCorner(Header, Radius.Group)
             local HeaderFill = MakeFrame(Header, UDim2.new(1,0,0.5,0), UDim2.new(0,0,0.5,0), Theme.GroupHeader)
-            HeaderFill.BackgroundTransparency = 0.1
+            HeaderFill.BackgroundTransparency = 0.3
 
             local AccentLine = MakeFrame(Header, UDim2.new(0,3,0,12), UDim2.new(0,8,0.5,-6), Theme.Accent)
             MakeCorner(AccentLine, 2)
@@ -458,7 +459,7 @@ function HollowLib:CreateWindow(config)
 
             local ItemContainer = MakeFrame(GroupFrame, UDim2.new(1,0,0,0), UDim2.new(0,0,0,28), Theme.GroupBG)
             ItemContainer.AutomaticSize = Enum.AutomaticSize.Y
-            ItemContainer.BackgroundTransparency = 0.15
+            ItemContainer.BackgroundTransparency = 0.35
             MakeCorner(ItemContainer, Radius.Group) MakePadding(ItemContainer, 6, 8, 6, 6)
             MakeList(ItemContainer, 8)
 
@@ -872,7 +873,7 @@ function HollowLib:CreateWindow(config)
         end
 
         local NotifFrame = MakeFrame(ScreenGui, UDim2.new(0,210,0,36), UDim2.new(1,10,1,-56), Theme.GroupBG)
-        NotifFrame.BackgroundTransparency = 0.15
+        NotifFrame.BackgroundTransparency = 0.3
         MakeCorner(NotifFrame, Radius.Group) MakeStroke(NotifFrame, Theme.Border, 1)
         local NotifBar = MakeFrame(NotifFrame, UDim2.new(0,3,1,-8), UDim2.new(0,0,0,4), Theme.Accent) MakeCorner(NotifBar, 2)
         local NotifText = MakeLabel(NotifFrame, text, 10, Theme.Text, Enum.Font.GothamMedium)
