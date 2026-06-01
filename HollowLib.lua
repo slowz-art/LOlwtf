@@ -259,8 +259,8 @@ function HollowLib:CreateWindow(config)
     local PlayerUser = MakeLabel(PlayerInfo, "@"..LocalPlayer.Name, 9, Theme.TextDisabled, Enum.Font.Gotham)
     PlayerUser.Size = UDim2.new(1,-30,0,12) PlayerUser.Position = UDim2.new(0,28,0,20)
 
-    -- Tab content area (inset from edges for breathing room)
-    local TabContent = MakeFrame(Content, UDim2.new(1,-148,1,-8), UDim2.new(0,130,0,4), Theme.Background)
+    -- Tab content area
+    local TabContent = MakeFrame(Content, UDim2.new(1,-124,1,0), UDim2.new(0,124,0,0), Theme.Background)
     TabContent.BackgroundTransparency = 1
     TabContent.ClipsDescendants = true
 
@@ -362,26 +362,47 @@ function HollowLib:CreateWindow(config)
         TabScroll.ScrollBarThickness = 3 TabScroll.ScrollBarImageColor3 = Theme.ScrollBar
         TabScroll.CanvasSize = UDim2.new(0,0,0,0) TabScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
         TabScroll.Parent = TabPage
-        MakePadding(TabScroll, 8, 10, 8, 8)
+
+        -- Inner wrapper for spacing (no UIPadding - use real frame offsets)
+        local InnerWrap = Instance.new("Frame")
+        InnerWrap.Size = UDim2.new(1,-38,0,0) -- 14 left + 24 right = 38
+        InnerWrap.Position = UDim2.new(0,14,0,14) -- 14px from left, 14px from top
+        InnerWrap.BackgroundTransparency = 1
+        InnerWrap.BorderSizePixel = 0
+        InnerWrap.AutomaticSize = Enum.AutomaticSize.Y
+        InnerWrap.Parent = TabScroll
 
         -- Two column container
-        local ColHolder = MakeFrame(TabScroll, UDim2.new(1,0,0,0), nil, Theme.Background, 1)
+        local ColHolder = MakeFrame(InnerWrap, UDim2.new(1,0,0,0), nil, Theme.Background, 1)
         ColHolder.AutomaticSize = Enum.AutomaticSize.Y
 
         local ColLayout = Instance.new("UIListLayout")
         ColLayout.FillDirection = Enum.FillDirection.Horizontal
-        ColLayout.Padding = UDim.new(0, 12)
+        ColLayout.Padding = UDim.new(0, 16)
         ColLayout.SortOrder = Enum.SortOrder.LayoutOrder
         ColLayout.VerticalAlignment = Enum.VerticalAlignment.Top
         ColLayout.Parent = ColHolder
 
-        local LeftCol = MakeFrame(ColHolder, UDim2.new(0.5,-6,0,0), nil, Theme.Background, 1)
+        local LeftCol = MakeFrame(ColHolder, UDim2.new(0.5,-8,0,0), nil, Theme.Background, 1)
         LeftCol.AutomaticSize = Enum.AutomaticSize.Y
         MakeList(LeftCol, 10)
 
-        local RightCol = MakeFrame(ColHolder, UDim2.new(0.5,-6,0,0), nil, Theme.Background, 1)
+        local RightCol = MakeFrame(ColHolder, UDim2.new(0.5,-8,0,0), nil, Theme.Background, 1)
         RightCol.AutomaticSize = Enum.AutomaticSize.Y
         MakeList(RightCol, 10)
+
+        -- Bottom spacer so scroll canvas has room at the end
+        local BottomSpacer = Instance.new("Frame")
+        BottomSpacer.Size = UDim2.new(1,0,0,16)
+        BottomSpacer.Position = UDim2.new(0,0,0,0)
+        BottomSpacer.BackgroundTransparency = 1
+        BottomSpacer.LayoutOrder = 9999
+        BottomSpacer.Parent = InnerWrap
+        
+        local WrapLayout = Instance.new("UIListLayout")
+        WrapLayout.Padding = UDim.new(0, 0)
+        WrapLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        WrapLayout.Parent = InnerWrap
 
         local function Activate()
             if ActiveTab and ActiveTab ~= Tab then ActiveTab:_deactivate() end
