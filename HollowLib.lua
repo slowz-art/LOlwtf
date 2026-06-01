@@ -794,6 +794,14 @@ function HollowLib:CreateWindow(config)
                 local key = cfg.Default or Enum.KeyCode.RightControl
                 local callback = cfg.Callback or function() end
                 local listening = false
+                           -- ADD TOGGLE
+            function Group:AddToggle(id, cfg)
+                                    local Toggle = {}
+                                    local state = cfg.Default or false
+                                    local callback = cfg.Callback or function() end
+
+                
+    MakeCorner(Row, Radius.Item) MakePadding(Row, 0, 0, 8, 8)
 
                 local Row = MakeFrame(ItemContainer, UDim2.new(1,0,0,30), nil, Theme.ItemBG)
                 MakeCorner(Row, Radius.Item) MakePadding(Row, 0, 0, 8, 8)
