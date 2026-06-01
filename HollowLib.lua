@@ -361,7 +361,7 @@ function HollowLib:CreateWindow(config)
         TabScroll.ScrollBarThickness = 3 TabScroll.ScrollBarImageColor3 = Theme.ScrollBar
         TabScroll.CanvasSize = UDim2.new(0,0,0,0) TabScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
         TabScroll.Parent = TabPage
-        MakePadding(TabScroll, 10, 14, 12, 18)
+        MakePadding(TabScroll, 10, 14, 12, 30)
 
         -- Two column container
         local ColHolder = MakeFrame(TabScroll, UDim2.new(1,0,0,0), nil, Theme.Background, 1)
