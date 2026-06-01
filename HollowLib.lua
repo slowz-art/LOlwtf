@@ -209,20 +209,37 @@ function HollowLib:CreateWindow(config)
     MakeCorner(Topbar, 8)
     local TopFix = MakeFrame(Topbar, UDim2.new(1, 0, 0.5, 0), UDim2.new(0, 0, 0.5, 0), Theme.Sidebar)
 
-    -- Custom Logo Image
+ 
+    
+    local LogoContainer = Instance.new("Frame")
+    LogoContainer.Size = UDim2.new(0, 28, 0, 28)
+    LogoContainer.Position = UDim2.new(0, 10, 0.5, -14)
+    LogoContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 24)
+    LogoContainer.BorderSizePixel = 0
+    LogoContainer.Parent = Topbar
+
+    local LogoCorner = Instance.new("UICorner")
+    LogoCorner.CornerRadius = UDim.new(0, 6)
+    LogoCorner.Parent = LogoContainer
+
+    local LogoStroke = Instance.new("UIStroke")
+    LogoStroke.Color = Color3.fromRGB(220, 30, 30) -- red accent
+    LogoStroke.Thickness = 1
+    LogoStroke.Parent = LogoContainer
+
+    -- Actual Image
     local LogoImg = Instance.new("ImageLabel")
     LogoImg.Image = "rbxassetid://109250647122928"
-    LogoImg.Size = UDim2.new(0, 20, 0, 20)
-    LogoImg.Position = UDim2.new(0, 10, 0.5, -10)
+    LogoImg.Size = UDim2.new(1, -6, 1, -6)
+    LogoImg.Position = UDim2.new(0, 3, 0, 3)
     LogoImg.BackgroundTransparency = 1
-    LogoImg.Parent = Topbar
-
-    -- Apply texture (if needed)
+    LogoImg.Parent = LogoContainer
+    
+    -- Optional texture overlay
     LogoImg.ScaleType = Enum.ScaleType.Fit
-    LogoImg.TileSize = UDim2.new(0, 87465223885645, 0, 87465223885645)
 
-    
-    
+
+
     -- Title
     local TitleLabel = MakeLabel(Topbar, config.Title or "HollowLib", 13, Theme.Text, Enum.Font.GothamBold)
     TitleLabel.Size = UDim2.new(1, -80, 1, 0)
