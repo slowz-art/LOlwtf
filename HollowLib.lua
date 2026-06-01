@@ -161,17 +161,18 @@ function HollowLib:CreateWindow(config)
     local LogoImg = Instance.new("ImageLabel")
     LogoImg.Name = "Logo"
     LogoImg.Image = "rbxassetid://87465223885645"
-    LogoImg.Size = UDim2.new(0,38,0,38)
-    LogoImg.Position = UDim2.new(0,4,0.5,-19)
+    LogoImg.Size = UDim2.new(0,48,0,48)
+    LogoImg.Position = UDim2.new(0,2,0.5,-24)
     LogoImg.BackgroundTransparency = 1
     LogoImg.BorderSizePixel = 0
     LogoImg.ScaleType = Enum.ScaleType.Fit
+    LogoImg.ZIndex = 5
     LogoImg.Parent = Topbar
 
     -- Title
     local TitleLabel = MakeLabel(Topbar, config.Title or "HollowLib", 13, Theme.Text, Enum.Font.GothamBold)
     TitleLabel.Size = UDim2.new(1, isMobile and -140 or -100, 1, 0)
-    TitleLabel.Position = UDim2.new(0, 46, 0, 0) TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
+    TitleLabel.Position = UDim2.new(0, 52, 0, 0) TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
 
     -- Topbar buttons helper
     local topBtnOffset = -30
@@ -360,7 +361,7 @@ function HollowLib:CreateWindow(config)
         TabScroll.ScrollBarThickness = 3 TabScroll.ScrollBarImageColor3 = Theme.ScrollBar
         TabScroll.CanvasSize = UDim2.new(0,0,0,0) TabScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
         TabScroll.Parent = TabPage
-        MakePadding(TabScroll, 10, 14, 12, 12)
+        MakePadding(TabScroll, 10, 14, 12, 18)
 
         -- Two column container
         local ColHolder = MakeFrame(TabScroll, UDim2.new(1,0,0,0), nil, Theme.Background, 1)
