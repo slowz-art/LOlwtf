@@ -259,8 +259,9 @@ function HollowLib:CreateWindow(config)
     local PlayerUser = MakeLabel(PlayerInfo, "@"..LocalPlayer.Name, 9, Theme.TextDisabled, Enum.Font.Gotham)
     PlayerUser.Size = UDim2.new(1,-30,0,12) PlayerUser.Position = UDim2.new(0,28,0,20)
 
-    -- Tab content area
-    local TabContent = MakeFrame(Content, UDim2.new(1,-124,1,0), UDim2.new(0,124,0,0), Theme.Background)
+    -- Tab content area (inset from edges for breathing room)
+    local TabContent = MakeFrame(Content, UDim2.new(1,-148,1,-8), UDim2.new(0,130,0,4), Theme.Background)
+    TabContent.BackgroundTransparency = 1
     TabContent.ClipsDescendants = true
 
     -- ===== RESIZE HANDLE =====
@@ -361,7 +362,7 @@ function HollowLib:CreateWindow(config)
         TabScroll.ScrollBarThickness = 3 TabScroll.ScrollBarImageColor3 = Theme.ScrollBar
         TabScroll.CanvasSize = UDim2.new(0,0,0,0) TabScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
         TabScroll.Parent = TabPage
-        MakePadding(TabScroll, 10, 14, 12, 30)
+        MakePadding(TabScroll, 8, 10, 8, 8)
 
         -- Two column container
         local ColHolder = MakeFrame(TabScroll, UDim2.new(1,0,0,0), nil, Theme.Background, 1)
