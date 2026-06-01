@@ -41,38 +41,24 @@ local Theme = {
 
 -- ===== CORNER RADIUS PRESETS =====
 local Radius = {
-    Window   = 12,   -- Main window
-    Topbar   = 12,   -- Top bar
-    Sidebar  = 0,    -- Sidebar (flush with window)
-    Group    = 10,   -- Group boxes
-    GroupHdr = 10,   -- Group headers
-    Item     = 8,    -- Toggle rows, buttons, sliders
-    Toggle   = 10,   -- Toggle pill background
-    ToggleKnob = 8,  -- Toggle circle
-    Slider   = 5,    -- Slider track
-    SliderKnob = 8,  -- Slider knob
-    Button   = 8,    -- Buttons
-    Drop     = 8,    -- Dropdown header
-    DropOpt  = 6,    -- Dropdown options
-    Tab      = 8,    -- Tab buttons
-    Notif    = 10,   -- Notifications
-    Watermark= 8,    -- Watermark bar
-    ColorBtn = 6,    -- Color picker button
-    Keybind  = 8,    -- Keybind button
-    Avatar   = 12,   -- Player avatar
-    Logo     = 8,    -- Logo container
-    Accent   = 3,    -- Accent bars
-    Picker   = 10,   -- Color picker popup
+    Window  = 14,
+    Group   = 12,
+    Item    = 10,
+    Button  = 10,
+    Toggle  = 10,
+    Small   = 8,
+    Pill    = 14,
+    Dot     = 3,
 }
 
 local function Tween(obj, props, t, style, dir)
     TweenService:Create(obj, TweenInfo.new(t or 0.2, style or Enum.EasingStyle.Quart, dir or Enum.EasingDirection.Out), props):Play()
 end
 
-local function MakeCorner(p, r) local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0, r or 8) c.Parent = p return c end
+local function MakeCorner(p, r) local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0, r or Radius.Item) c.Parent = p return c end
 local function MakeStroke(p, c, t) local s = Instance.new("UIStroke") s.Color = c or Theme.Border s.Thickness = t or 1 s.Parent = p return s end
 local function MakePadding(p, t, b, l, r) local u = Instance.new("UIPadding") u.PaddingTop = UDim.new(0, t or 6) u.PaddingBottom = UDim.new(0, b or 6) u.PaddingLeft = UDim.new(0, l or 8) u.PaddingRight = UDim.new(0, r or 8) u.Parent = p end
-local function MakeList(p, pad, fill) local l = Instance.new("UIListLayout") l.Padding = UDim.new(0, pad or 4) l.FillDirection = fill or Enum.FillDirection.Vertical l.SortOrder = Enum.SortOrder.LayoutOrder l.Parent = p return l end
+local function MakeList(p, pad, fill) local l = Instance.new("UIListLayout") l.Padding = UDim.new(0, pad or 3) l.FillDirection = fill or Enum.FillDirection.Vertical l.SortOrder = Enum.SortOrder.LayoutOrder l.Parent = p return l end
 
 local function MakeLabel(p, txt, sz, c, f, xa)
     local l = Instance.new("TextLabel")
@@ -137,7 +123,7 @@ function HollowLib:CreateWindow(config)
     local uiVisible = true
     local uiLocked = false
     local hideKey = config.HideKey or Enum.KeyCode.RightControl
-    local curW, curH = 520, 430
+    local curW, curH = 580, 400
     local minW, minH = 380, 280
 
     -- Main Frame
@@ -154,13 +140,12 @@ function HollowLib:CreateWindow(config)
 
     -- Topbar
     local Topbar = MakeFrame(Main, UDim2.new(1,0,0,34), nil, Theme.Sidebar)
-    MakeCorner(Topbar, Radius.Topbar)
-    -- Bottom fill to square off bottom corners against content
+    MakeCorner(Topbar, Radius.Window)
     MakeFrame(Topbar, UDim2.new(1,0,0.5,0), UDim2.new(0,0,0.5,0), Theme.Sidebar)
 
     -- Logo
     local LogoContainer = MakeFrame(Topbar, UDim2.new(0,26,0,26), UDim2.new(0,8,0.5,-13), Color3.fromRGB(20,20,24))
-    MakeCorner(LogoContainer, Radius.Logo)
+    MakeCorner(LogoContainer, Radius.Small)
     local LogoStroke = Instance.new("UIStroke") LogoStroke.Color = Theme.Accent LogoStroke.Thickness = 1 LogoStroke.Parent = LogoContainer
     local LogoImg = Instance.new("ImageLabel")
     LogoImg.Image = "rbxassetid://109250647122928"
@@ -180,7 +165,7 @@ function HollowLib:CreateWindow(config)
     local topBtnOffset = -30
     local function makeTopBtn(sym, color)
         local b = MakeButton(Topbar, UDim2.new(0,26,0,26), UDim2.new(1,topBtnOffset,0.5,-13), Theme.Sidebar)
-        MakeCorner(b, Radius.Tab)
+        MakeCorner(b, Radius.Small)
         local l = MakeLabel(b, sym, 14, color or Theme.TextDim, Enum.Font.GothamBold, Enum.TextXAlignment.Center)
         l.Size = UDim2.new(1,0,1,0) l.TextYAlignment = Enum.TextYAlignment.Center
         b.MouseEnter:Connect(function() Tween(b, {BackgroundColor3=Theme.GroupBG}, 0.15) end)
@@ -249,19 +234,19 @@ function HollowLib:CreateWindow(config)
     MakeStroke(Sidebar, Theme.Border, 1)
 
     local SideTitle = MakeLabel(Sidebar, "NAVIGATION", 9, Theme.TextDisabled, Enum.Font.GothamBold)
-    SideTitle.Size = UDim2.new(1,-16,0,18) SideTitle.Position = UDim2.new(0,8,0,8)
+    SideTitle.Size = UDim2.new(1,-14,0,18) SideTitle.Position = UDim2.new(0,8,0,8)
 
-    local TabList = MakeFrame(Sidebar, UDim2.new(1,0,1,-44), UDim2.new(0,0,0,28), Theme.Sidebar)
+    local TabList = MakeFrame(Sidebar, UDim2.new(1,0,1,-42), UDim2.new(0,0,0,28), Theme.Sidebar)
     TabList.ClipsDescendants = true
     MakeList(TabList, 2) MakePadding(TabList, 4, 4, 6, 6)
 
     -- Player info
     local PlayerInfo = MakeFrame(Sidebar, UDim2.new(1,0,0,38), UDim2.new(0,0,1,-38), Theme.Sidebar)
-    MakeStroke(PlayerInfo, Theme.Border, 1) MakePadding(PlayerInfo, 6, 6, 8, 8)
+    MakeStroke(PlayerInfo, Theme.Border, 1) MakePadding(PlayerInfo, 5, 5, 8, 8)
     local PlayerAvatar = MakeImage(PlayerInfo, "https://www.roblox.com/headshot-thumbnail/image?userId="..LocalPlayer.UserId.."&width=48&height=48&format=png", UDim2.new(0,22,0,22), UDim2.new(0,0,0.5,-11))
-    MakeCorner(PlayerAvatar, Radius.Avatar)
+    MakeCorner(PlayerAvatar, 11)
     local PlayerName = MakeLabel(PlayerInfo, LocalPlayer.DisplayName, 10, Theme.Text, Enum.Font.GothamMedium)
-    PlayerName.Size = UDim2.new(1,-30,0,12) PlayerName.Position = UDim2.new(0,28,0,6)
+    PlayerName.Size = UDim2.new(1,-30,0,13) PlayerName.Position = UDim2.new(0,28,0,5)
     local PlayerUser = MakeLabel(PlayerInfo, "@"..LocalPlayer.Name, 9, Theme.TextDisabled, Enum.Font.Gotham)
     PlayerUser.Size = UDim2.new(1,-30,0,12) PlayerUser.Position = UDim2.new(0,28,0,19)
 
@@ -311,10 +296,10 @@ function HollowLib:CreateWindow(config)
 
     -- ===== WATERMARK =====
     local Watermark = MakeFrame(ScreenGui, UDim2.new(0, isMobile and 160 or 220, 0, 24), UDim2.new(0,12,0,12), Theme.Watermark)
-    MakeCorner(Watermark, Radius.Watermark) MakeStroke(Watermark, Theme.Border, 1)
+    MakeCorner(Watermark, Radius.Small) MakeStroke(Watermark, Theme.Border, 1)
 
     local WMBar = MakeFrame(Watermark, UDim2.new(0,3,0,14), UDim2.new(0,0,0.5,-7), Theme.Accent)
-    MakeCorner(WMBar, Radius.Accent)
+    MakeCorner(WMBar, 2)
 
     local WatermarkText = MakeLabel(Watermark, "hollowoodz | 0fps | 0ms", 11, Theme.TextDim, Enum.Font.GothamMedium)
     WatermarkText.Size = UDim2.new(1,-12,1,0) WatermarkText.Position = UDim2.new(0,10,0,0)
@@ -344,13 +329,13 @@ function HollowLib:CreateWindow(config)
         local isActive = false
 
         local TabBtn = MakeButton(TabList, UDim2.new(1,0,0,30), nil, Theme.TabInactive)
-        MakeCorner(TabBtn, Radius.Tab)
+        MakeCorner(TabBtn, Radius.Small)
 
         local TabIndicator = MakeFrame(TabBtn, UDim2.new(0,3,0,14), UDim2.new(0,0,0.5,-7), Theme.Accent)
-        TabIndicator.BackgroundTransparency = 1 MakeCorner(TabIndicator, Radius.Accent)
+        TabIndicator.BackgroundTransparency = 1 MakeCorner(TabIndicator, 2)
 
         local TabIcon = MakeLabel(TabBtn, icon or "", 12, Theme.TextDim, Enum.Font.GothamMedium)
-        TabIcon.Size = UDim2.new(0,18,1,0) TabIcon.Position = UDim2.new(0,8,0,0)
+        TabIcon.Size = UDim2.new(0,18,1,0) TabIcon.Position = UDim2.new(0,7,0,0)
         TabIcon.TextXAlignment = Enum.TextXAlignment.Center
 
         local TabLabel = MakeLabel(TabBtn, name, 11, Theme.TextDim, Enum.Font.GothamMedium)
@@ -366,7 +351,7 @@ function HollowLib:CreateWindow(config)
         TabScroll.ScrollBarThickness = 3 TabScroll.ScrollBarImageColor3 = Theme.ScrollBar
         TabScroll.CanvasSize = UDim2.new(0,0,0,0) TabScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
         TabScroll.Parent = TabPage
-        MakePadding(TabScroll, 6, 6, 6, 6)
+        MakePadding(TabScroll, 6, 10, 6, 6)
 
         -- Two column container
         local ColHolder = MakeFrame(TabScroll, UDim2.new(1,0,0,0), nil, Theme.Background, 1)
@@ -381,11 +366,11 @@ function HollowLib:CreateWindow(config)
 
         local LeftCol = MakeFrame(ColHolder, UDim2.new(0.5,-3,0,0), nil, Theme.Background, 1)
         LeftCol.AutomaticSize = Enum.AutomaticSize.Y
-        MakeList(LeftCol, 5)
+        MakeList(LeftCol, 8)
 
         local RightCol = MakeFrame(ColHolder, UDim2.new(0.5,-3,0,0), nil, Theme.Background, 1)
         RightCol.AutomaticSize = Enum.AutomaticSize.Y
-        MakeList(RightCol, 5)
+        MakeList(RightCol, 8)
 
         local function Activate()
             if ActiveTab and ActiveTab ~= Tab then ActiveTab:_deactivate() end
@@ -419,38 +404,27 @@ function HollowLib:CreateWindow(config)
         -- ==================
         local function AddGroupInternal(name, col)
             local Group = {}
-            local collapsed = false
 
             local GroupFrame = MakeFrame(col, UDim2.new(1,0,0,0), nil, Theme.GroupBG)
             GroupFrame.AutomaticSize = Enum.AutomaticSize.Y
             MakeCorner(GroupFrame, Radius.Group) MakeStroke(GroupFrame, Theme.Border, 1)
             GroupFrame.ClipsDescendants = false
 
-            local Header = MakeButton(GroupFrame, UDim2.new(1,0,0,28), nil, Theme.GroupHeader)
-            MakeCorner(Header, Radius.GroupHdr)
+            local Header = MakeFrame(GroupFrame, UDim2.new(1,0,0,28), nil, Theme.GroupHeader)
+            MakeCorner(Header, Radius.Group)
             MakeFrame(Header, UDim2.new(1,0,0.5,0), UDim2.new(0,0,0.5,0), Theme.GroupHeader)
 
             local AccentLine = MakeFrame(Header, UDim2.new(0,3,0,12), UDim2.new(0,8,0.5,-6), Theme.Accent)
-            MakeCorner(AccentLine, Radius.Accent)
+            MakeCorner(AccentLine, 2)
 
             local GroupTitle = MakeLabel(Header, name, 11, Theme.Text, Enum.Font.GothamBold)
-            GroupTitle.Size = UDim2.new(1,-46,1,0) GroupTitle.Position = UDim2.new(0,18,0,0)
+            GroupTitle.Size = UDim2.new(1,-20,1,0) GroupTitle.Position = UDim2.new(0,18,0,0)
             GroupTitle.TextYAlignment = Enum.TextYAlignment.Center
-
-            local Arrow = MakeLabel(Header, "▾", 13, Theme.TextDim, Enum.Font.GothamBold, Enum.TextXAlignment.Center)
-            Arrow.Size = UDim2.new(0,18,1,0) Arrow.Position = UDim2.new(1,-22,0,0)
-            Arrow.TextYAlignment = Enum.TextYAlignment.Center
 
             local ItemContainer = MakeFrame(GroupFrame, UDim2.new(1,0,0,0), UDim2.new(0,0,0,28), Theme.GroupBG)
             ItemContainer.AutomaticSize = Enum.AutomaticSize.Y
-            MakeCorner(ItemContainer, Radius.Group) MakePadding(ItemContainer, 3, 5, 5, 5)
-            MakeList(ItemContainer, 3)
-
-            Header.MouseButton1Click:Connect(function()
-                collapsed = not collapsed
-                Tween(Arrow, {Rotation=collapsed and -90 or 0}, 0.2)
-                ItemContainer.Visible = not collapsed
-            end)
+            MakeCorner(ItemContainer, Radius.Group) MakePadding(ItemContainer, 4, 6, 5, 5)
+            MakeList(ItemContainer, 6)
 
             -- ADD TOGGLE
             function Group:AddToggle(id, cfg)
@@ -465,13 +439,13 @@ function HollowLib:CreateWindow(config)
                 RowBtn.BackgroundTransparency = 1
 
                 local ToggleLabel = MakeLabel(Row, cfg.Text or id, 11, Theme.Text, Enum.Font.GothamMedium)
-                ToggleLabel.Size = UDim2.new(1,-42,1,0) ToggleLabel.TextYAlignment = Enum.TextYAlignment.Center
+                ToggleLabel.Size = UDim2.new(1,-44,1,0) ToggleLabel.TextYAlignment = Enum.TextYAlignment.Center
 
                 local ToggleBG = MakeFrame(Row, UDim2.new(0,34,0,17), UDim2.new(1,-36,0.5,-8), Theme.Toggle)
                 MakeCorner(ToggleBG, Radius.Toggle) MakeStroke(ToggleBG, Theme.Border, 1)
 
                 local ToggleCircle = MakeFrame(ToggleBG, UDim2.new(0,13,0,13), UDim2.new(0,2,0.5,-6), Theme.TextDisabled)
-                MakeCorner(ToggleCircle, Radius.ToggleKnob)
+                MakeCorner(ToggleCircle, 7)
 
                 local function SetState(newState, skipCb)
                     state = newState
@@ -518,15 +492,15 @@ function HollowLib:CreateWindow(config)
                 local ValueLabel = MakeLabel(TopRow, tostring(value)..suffix, 10, Theme.Accent, Enum.Font.GothamBold, Enum.TextXAlignment.Right)
                 ValueLabel.Size = UDim2.new(0.3,0,1,0) ValueLabel.Position = UDim2.new(0.7,0,0,0)
 
-                local SliderBG = MakeFrame(Container, UDim2.new(1,0,0,5), UDim2.new(0,0,1,-8), Theme.SliderBG)
-                MakeCorner(SliderBG, Radius.Slider) MakeStroke(SliderBG, Theme.Border, 1)
+                local SliderBG = MakeFrame(Container, UDim2.new(1,0,0,5), UDim2.new(0,0,1,-9), Theme.SliderBG)
+                MakeCorner(SliderBG, Radius.Dot) MakeStroke(SliderBG, Theme.Border, 1)
 
                 local alpha = (value-min)/(max-min)
                 local SliderFill = MakeFrame(SliderBG, UDim2.new(alpha,0,1,0), nil, Theme.SliderFill)
-                MakeCorner(SliderFill, Radius.Slider)
+                MakeCorner(SliderFill, Radius.Dot)
 
                 local SliderKnob = MakeFrame(SliderBG, UDim2.new(0,11,0,11), UDim2.new(alpha,-5,0.5,-5), Theme.Text)
-                MakeCorner(SliderKnob, Radius.SliderKnob) MakeStroke(SliderKnob, Theme.Accent, 1)
+                MakeCorner(SliderKnob, 6) MakeStroke(SliderKnob, Theme.Accent, 1)
 
                 local SliderBtn = MakeButton(SliderBG, UDim2.new(1,0,1,0), nil, Theme.Background)
                 SliderBtn.BackgroundTransparency = 1 SliderBtn.ZIndex = 2
@@ -573,13 +547,13 @@ function HollowLib:CreateWindow(config)
                 local callback = cfg.Func or cfg.Callback or function() end
 
                 local Btn = MakeButton(ItemContainer, UDim2.new(1,0,0,26), nil, Theme.ItemBG)
-                MakeCorner(Btn, Radius.Button) MakeStroke(Btn, Theme.Border, 1)
+                MakeCorner(Btn, Radius.Item) MakeStroke(Btn, Theme.Border, 1)
 
                 local BtnLabel = MakeLabel(Btn, text, 11, Theme.Text, Enum.Font.GothamMedium, Enum.TextXAlignment.Center)
                 BtnLabel.Size = UDim2.new(1,0,1,0) BtnLabel.TextYAlignment = Enum.TextYAlignment.Center
 
                 local AccentLeft = MakeFrame(Btn, UDim2.new(0,3,0,12), UDim2.new(0,0,0.5,-6), Theme.Accent)
-                MakeCorner(AccentLeft, Radius.Accent) AccentLeft.BackgroundTransparency = 1
+                MakeCorner(AccentLeft, 2) AccentLeft.BackgroundTransparency = 1
 
                 Btn.MouseEnter:Connect(function()
                     Tween(Btn,{BackgroundColor3=Theme.GroupHeader},0.1)
@@ -615,7 +589,7 @@ function HollowLib:CreateWindow(config)
                 MakeCorner(Container, Radius.Item) MakePadding(Container, 3, 3, 6, 6)
 
                 local Header = MakeButton(Container, UDim2.new(1,0,0,24), nil, Theme.DropBG)
-                MakeCorner(Header, Radius.Drop) MakeStroke(Header, Theme.Border, 1)
+                MakeCorner(Header, Radius.Small) MakeStroke(Header, Theme.Border, 1)
 
                 local DropLabel = MakeLabel(Header, cfg.Text or id, 10, Theme.TextDim, Enum.Font.Gotham)
                 DropLabel.Size = UDim2.new(1,-28,0,11) DropLabel.Position = UDim2.new(0,8,0,2)
@@ -630,7 +604,7 @@ function HollowLib:CreateWindow(config)
                 local OptionList = MakeFrame(Container, UDim2.new(1,0,0,0), UDim2.new(0,0,0,30), Theme.DropOpen)
                 OptionList.AutomaticSize = Enum.AutomaticSize.Y OptionList.ClipsDescendants = true
                 OptionList.Visible = false OptionList.ZIndex = 10
-                MakeCorner(OptionList, Radius.Drop) MakeStroke(OptionList, Theme.Border, 1)
+                MakeCorner(OptionList, Radius.Small) MakeStroke(OptionList, Theme.Border, 1)
                 MakePadding(OptionList, 3, 3, 3, 3) MakeList(OptionList, 2)
 
                 local function BuildOptions()
@@ -638,7 +612,7 @@ function HollowLib:CreateWindow(config)
                     for _, val in ipairs(values) do
                         local isSel = (multi and multiSelected[val]) or (not multi and selected == val)
                         local Opt = MakeButton(OptionList, UDim2.new(1,0,0,22), nil, isSel and Theme.AccentDark or Theme.DropBG)
-                        MakeCorner(Opt, Radius.DropOpt)
+                        MakeCorner(Opt, Radius.Small)
                         local OptLabel = MakeLabel(Opt, tostring(val), 10, isSel and Theme.Text or Theme.TextDim, Enum.Font.GothamMedium)
                         OptLabel.Size = UDim2.new(1,-8,1,0) OptLabel.Position = UDim2.new(0,8,0,0)
                         OptLabel.TextYAlignment = Enum.TextYAlignment.Center
@@ -696,7 +670,7 @@ function HollowLib:CreateWindow(config)
             -- ADD DIVIDER
             function Group:AddDivider()
                 local Div = MakeFrame(ItemContainer, UDim2.new(1,0,0,6), nil, Theme.ItemBG)
-                local Line = MakeFrame(Div, UDim2.new(1,-12,0,1), UDim2.new(0,6,0.5,0), Theme.Border)
+                local Line = MakeFrame(Div, UDim2.new(1,-14,0,1), UDim2.new(0,7,0.5,0), Theme.Border)
                 MakeCorner(Line, 1)
                 return Div
             end
@@ -712,35 +686,35 @@ function HollowLib:CreateWindow(config)
                 MakeCorner(Container, Radius.Item) MakePadding(Container, 0, 0, 8, 8)
 
                 local PickerLabel = MakeLabel(Container, cfg.Title or id, 11, Theme.Text, Enum.Font.GothamMedium)
-                PickerLabel.Size = UDim2.new(1,-42,1,0) PickerLabel.TextYAlignment = Enum.TextYAlignment.Center
+                PickerLabel.Size = UDim2.new(1,-44,1,0) PickerLabel.TextYAlignment = Enum.TextYAlignment.Center
 
                 local ColorBtn = MakeButton(Container, UDim2.new(0,34,0,17), UDim2.new(1,-36,0.5,-8), color)
-                MakeCorner(ColorBtn, Radius.ColorBtn) MakeStroke(ColorBtn, Theme.BorderBright, 1)
+                MakeCorner(ColorBtn, Radius.Small) MakeStroke(ColorBtn, Theme.BorderBright, 1)
 
                 local PickerPopup = MakeFrame(ScreenGui, UDim2.new(0,190,0,210), UDim2.new(0,0,0,0), Theme.GroupBG)
                 PickerPopup.Visible = false PickerPopup.ZIndex = 100
-                MakeCorner(PickerPopup, Radius.Picker) MakeStroke(PickerPopup, Theme.BorderBright, 1)
-                MakePadding(PickerPopup, 10, 10, 10, 10) MakeList(PickerPopup, 5)
+                MakeCorner(PickerPopup, Radius.Group) MakeStroke(PickerPopup, Theme.BorderBright, 1)
+                MakePadding(PickerPopup, 8, 8, 8, 8) MakeList(PickerPopup, 5)
 
                 local PickerTitle = MakeLabel(PickerPopup, cfg.Title or "Color Picker", 11, Theme.Text, Enum.Font.GothamBold)
                 PickerTitle.Size = UDim2.new(1,0,0,14)
 
-                local HueLabel = MakeLabel(PickerPopup, "Hue", 9, Theme.TextDim, Enum.Font.Gotham) HueLabel.Size = UDim2.new(1,0,0,10)
-                local HueBG = MakeFrame(PickerPopup, UDim2.new(1,0,0,12), nil, Theme.SliderBG) HueBG.ZIndex=101 MakeCorner(HueBG,Radius.Slider)
+                local HueLabel = MakeLabel(PickerPopup, "Hue", 9, Theme.TextDim, Enum.Font.Gotham) HueLabel.Size = UDim2.new(1,0,0,11)
+                local HueBG = MakeFrame(PickerPopup, UDim2.new(1,0,0,12), nil, Theme.SliderBG) HueBG.ZIndex=101 MakeCorner(HueBG,Radius.Dot)
                 local HueGrad = Instance.new("UIGradient")
                 HueGrad.Color = ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromHSV(0,1,1)),ColorSequenceKeypoint.new(0.167,Color3.fromHSV(0.167,1,1)),ColorSequenceKeypoint.new(0.333,Color3.fromHSV(0.333,1,1)),ColorSequenceKeypoint.new(0.5,Color3.fromHSV(0.5,1,1)),ColorSequenceKeypoint.new(0.667,Color3.fromHSV(0.667,1,1)),ColorSequenceKeypoint.new(0.833,Color3.fromHSV(0.833,1,1)),ColorSequenceKeypoint.new(1,Color3.fromHSV(1,1,1))})
                 HueGrad.Parent = HueBG
-                local HueKnob = MakeFrame(HueBG,UDim2.new(0,10,1,4),UDim2.new(0,-5,0,-2),Theme.Text) MakeCorner(HueKnob,Radius.Slider) MakeStroke(HueKnob,Theme.Border,1) HueKnob.ZIndex=102
+                local HueKnob = MakeFrame(HueBG,UDim2.new(0,10,1,4),UDim2.new(0,-5,0,-2),Theme.Text) MakeCorner(HueKnob,Radius.Dot) MakeStroke(HueKnob,Theme.Border,1) HueKnob.ZIndex=102
 
-                local SatLabel = MakeLabel(PickerPopup,"Saturation",9,Theme.TextDim,Enum.Font.Gotham) SatLabel.Size=UDim2.new(1,0,0,10)
-                local SatBG = MakeFrame(PickerPopup,UDim2.new(1,0,0,12),nil,Theme.SliderBG) SatBG.ZIndex=101 MakeCorner(SatBG,Radius.Slider)
-                local SatFill = MakeFrame(SatBG,UDim2.new(1,0,1,0),nil,Theme.Accent) MakeCorner(SatFill,Radius.Slider)
-                local SatKnob = MakeFrame(SatBG,UDim2.new(0,10,1,4),UDim2.new(1,-5,0,-2),Theme.Text) MakeCorner(SatKnob,Radius.Slider) MakeStroke(SatKnob,Theme.Border,1) SatKnob.ZIndex=102
+                local SatLabel = MakeLabel(PickerPopup,"Saturation",9,Theme.TextDim,Enum.Font.Gotham) SatLabel.Size=UDim2.new(1,0,0,11)
+                local SatBG = MakeFrame(PickerPopup,UDim2.new(1,0,0,12),nil,Theme.SliderBG) SatBG.ZIndex=101 MakeCorner(SatBG,Radius.Dot)
+                local SatFill = MakeFrame(SatBG,UDim2.new(1,0,1,0),nil,Theme.Accent) MakeCorner(SatFill,Radius.Dot)
+                local SatKnob = MakeFrame(SatBG,UDim2.new(0,10,1,4),UDim2.new(1,-5,0,-2),Theme.Text) MakeCorner(SatKnob,Radius.Dot) MakeStroke(SatKnob,Theme.Border,1) SatKnob.ZIndex=102
 
-                local ValLabel = MakeLabel(PickerPopup,"Value",9,Theme.TextDim,Enum.Font.Gotham) ValLabel.Size=UDim2.new(1,0,0,10)
-                local ValBG = MakeFrame(PickerPopup,UDim2.new(1,0,0,12),nil,Theme.SliderBG) ValBG.ZIndex=101 MakeCorner(ValBG,Radius.Slider)
-                local ValFill = MakeFrame(ValBG,UDim2.new(1,0,1,0),nil,Theme.Text) MakeCorner(ValFill,Radius.Slider)
-                local ValKnob = MakeFrame(ValBG,UDim2.new(0,10,1,4),UDim2.new(1,-5,0,-2),Theme.Text) MakeCorner(ValKnob,Radius.Slider) MakeStroke(ValKnob,Theme.Border,1) ValKnob.ZIndex=102
+                local ValLabel = MakeLabel(PickerPopup,"Value",9,Theme.TextDim,Enum.Font.Gotham) ValLabel.Size=UDim2.new(1,0,0,11)
+                local ValBG = MakeFrame(PickerPopup,UDim2.new(1,0,0,12),nil,Theme.SliderBG) ValBG.ZIndex=101 MakeCorner(ValBG,Radius.Dot)
+                local ValFill = MakeFrame(ValBG,UDim2.new(1,0,1,0),nil,Theme.Text) MakeCorner(ValFill,Radius.Dot)
+                local ValKnob = MakeFrame(ValBG,UDim2.new(0,10,1,4),UDim2.new(1,-5,0,-2),Theme.Text) MakeCorner(ValKnob,Radius.Dot) MakeStroke(ValKnob,Theme.Border,1) ValKnob.ZIndex=102
 
                 local hue, sat, val = Color3.toHSV(color)
 
@@ -802,7 +776,7 @@ function HollowLib:CreateWindow(config)
                 KBLabel.Size = UDim2.new(1,-74,1,0) KBLabel.TextYAlignment = Enum.TextYAlignment.Center
 
                 local KBBtn = MakeButton(Row, UDim2.new(0,66,0,18), UDim2.new(1,-68,0.5,-9), Theme.DropBG)
-                MakeCorner(KBBtn, Radius.Keybind) MakeStroke(KBBtn, Theme.Border, 1)
+                MakeCorner(KBBtn, Radius.Small) MakeStroke(KBBtn, Theme.Border, 1)
 
                 local KBText = MakeLabel(KBBtn, tostring(key.Name), 9, Theme.Accent, Enum.Font.GothamMedium, Enum.TextXAlignment.Center)
                 KBText.Size = UDim2.new(1,0,1,0) KBText.TextYAlignment = Enum.TextYAlignment.Center
@@ -861,9 +835,9 @@ function HollowLib:CreateWindow(config)
             Tween(nf, {Position=UDim2.new(cur.X.Scale,cur.X.Offset,cur.Y.Scale,cur.Y.Offset-42)}, 0.2)
         end
 
-        local NotifFrame = MakeFrame(ScreenGui, UDim2.new(0,210,0,38), UDim2.new(1,10,1,-56), Theme.GroupBG)
-        MakeCorner(NotifFrame, Radius.Notif) MakeStroke(NotifFrame, Theme.Border, 1)
-        local NotifBar = MakeFrame(NotifFrame, UDim2.new(0,3,1,-8), UDim2.new(0,0,0,4), Theme.Accent) MakeCorner(NotifBar, Radius.Accent)
+        local NotifFrame = MakeFrame(ScreenGui, UDim2.new(0,210,0,36), UDim2.new(1,10,1,-56), Theme.GroupBG)
+        MakeCorner(NotifFrame, Radius.Group) MakeStroke(NotifFrame, Theme.Border, 1)
+        local NotifBar = MakeFrame(NotifFrame, UDim2.new(0,3,1,-8), UDim2.new(0,0,0,4), Theme.Accent) MakeCorner(NotifBar, 2)
         local NotifText = MakeLabel(NotifFrame, text, 10, Theme.Text, Enum.Font.GothamMedium)
         NotifText.Size = UDim2.new(1,-14,1,0) NotifText.Position = UDim2.new(0,10,0,0)
         NotifText.TextYAlignment = Enum.TextYAlignment.Center NotifText.TextWrapped = true
