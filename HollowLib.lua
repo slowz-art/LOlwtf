@@ -148,7 +148,7 @@ function HollowLib:CreateWindow(config)
     MakeCorner(LogoContainer, Radius.Small)
     local LogoStroke = Instance.new("UIStroke") LogoStroke.Color = Theme.Accent LogoStroke.Thickness = 1 LogoStroke.Parent = LogoContainer
     local LogoImg = Instance.new("ImageLabel")
-    LogoImg.Image = "rbxassetid://109250647122928"
+    LogoImg.Image = "rbxassetid://87465223885645"
     LogoImg.Size = UDim2.new(1,0,1,0)
     LogoImg.Position = UDim2.new(0,0,0,0)
     LogoImg.BackgroundTransparency = 1
@@ -181,23 +181,6 @@ function HollowLib:CreateWindow(config)
     CloseBtn.MouseButton1Click:Connect(function()
         Tween(Main,{Size=UDim2.new(0,curW,0,0),Position=UDim2.new(0.5,-curW/2,0.5,0)},0.3,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
         task.wait(0.35) ScreenGui:Destroy()
-    end)
-
-    -- Minimize
-    local MinBtn, MinL = makeTopBtn("−")
-    local minimized = false
-    MinBtn.MouseButton1Click:Connect(function()
-        minimized = not minimized
-        local ContentFrame = Main:FindFirstChild("HollowContent")
-        if minimized then
-            if ContentFrame then ContentFrame.Visible = false end
-            Tween(Main, {Size=UDim2.new(0,curW,0,34)}, 0.3)
-        else
-            Tween(Main, {Size=UDim2.new(0,curW,0,curH)}, 0.3)
-            task.delay(0.15, function()
-                if ContentFrame then ContentFrame.Visible = true end
-            end)
-        end
     end)
 
     -- Mobile only buttons
@@ -294,7 +277,7 @@ function HollowLib:CreateWindow(config)
             local d = i.Position - resizeStart
             curW = math.max(minW, startW + d.X)
             curH = math.max(minH, startH + d.Y)
-            Main.Size = UDim2.new(0, curW, 0, minimized and 34 or curH)
+            Main.Size = UDim2.new(0, curW, 0, curH)
         end
     end)
     UserInputService.InputEnded:Connect(function(i)
