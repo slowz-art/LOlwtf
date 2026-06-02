@@ -13,6 +13,14 @@ local LocalPlayer = Players.LocalPlayer
 
 local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
 
+-- Polyfills for executor compatibility
+if not math.clamp then
+    math.clamp = function(v, lo, hi) return math.min(math.max(v, lo), hi) end
+end
+if not getgenv then
+    getgenv = function() return _G end
+end
+
 local Theme = {
     Background  = Color3.fromRGB(10, 10, 12),
     Sidebar     = Color3.fromRGB(14, 14, 17),
@@ -205,7 +213,7 @@ function HollowLib:CreateWindow(config)
     end
 
     -- Close
-    local CloseBtn, CloseL = makeTopBtn("×")
+    local CloseBtn, CloseL = makeTopBtn("X")
     CloseBtn.MouseEnter:Connect(function() Tween(CloseBtn,{BackgroundColor3=Theme.AccentDark},0.15) Tween(CloseL,{TextColor3=Theme.Text},0.15) end)
     CloseBtn.MouseLeave:Connect(function() Tween(CloseBtn,{BackgroundColor3=Theme.Sidebar},0.15) Tween(CloseL,{TextColor3=Theme.TextDim},0.15) end)
     CloseBtn.MouseButton1Click:Connect(function()
@@ -215,7 +223,7 @@ function HollowLib:CreateWindow(config)
 
     -- Mobile only buttons
     if isMobile then
-        local TogBtn, TogL = makeTopBtn("👁")
+        local TogBtn, TogL = makeTopBtn("[=]")
         TogBtn.MouseButton1Click:Connect(function()
             uiVisible = not uiVisible
             local Content = Main:FindFirstChild("HollowContent")
@@ -225,10 +233,10 @@ function HollowLib:CreateWindow(config)
             Tween(TogL, {TextColor3 = uiVisible and Theme.TextDim or Theme.Text}, 0.15)
         end)
 
-        local LockBtn, LockL = makeTopBtn("🔓")
+        local LockBtn, LockL = makeTopBtn("UL")
         LockBtn.MouseButton1Click:Connect(function()
             uiLocked = not uiLocked
-            LockL.Text = uiLocked and "🔒" or "🔓"
+            LockL.Text = uiLocked and "LK" or "UL"
             Tween(LockBtn, {BackgroundColor3 = uiLocked and Theme.AccentDark or Theme.Sidebar}, 0.15)
             Tween(LockL, {TextColor3 = uiLocked and Theme.Text or Theme.TextDim}, 0.15)
             Window:Notify(uiLocked and "UI Locked" or "UI Unlocked", 2)
@@ -237,15 +245,8 @@ function HollowLib:CreateWindow(config)
 
     MakeDraggable(Topbar, Main, function() return uiLocked end)
 
-    -- Hide/show keybind (desktop)
-    UserInputService.InputBegan:Connect(function(input, gpe)
-        if gpe then return end
-        if input.KeyCode == Enum.KeyCode.RightControl or input.KeyCode == hideKey then
-            uiVisible = not uiVisible
-            Main.Visible = uiVisible
-            Watermark.Visible = uiVisible
-        end
-    end)
+    -- Hide/show keybind (desktop) - set up after Watermark is created
+    local hideConnection
 
     -- Content
     local Content = MakeFrame(Main, UDim2.new(1,0,1,-34), UDim2.new(0,0,0,34), Theme.Background)
@@ -333,6 +334,16 @@ function HollowLib:CreateWindow(config)
         if fps >= 50 then WMFps.TextColor3 = Theme.Accent
         elseif fps >= 30 then WMFps.TextColor3 = Color3.fromRGB(220, 180, 30)
         else WMFps.TextColor3 = Color3.fromRGB(220, 50, 50) end
+    end)
+
+    -- Hide/show keybind (now that Watermark exists)
+    hideConnection = UserInputService.InputBegan:Connect(function(input, gpe)
+        if gpe then return end
+        if input.KeyCode == Enum.KeyCode.RightControl or input.KeyCode == hideKey then
+            uiVisible = not uiVisible
+            Main.Visible = uiVisible
+            Watermark.Visible = uiVisible
+        end
     end)
 
     -- Open animation
@@ -721,7 +732,7 @@ function HollowLib:CreateWindow(config)
                         OptLabel.TextYAlignment = Enum.TextYAlignment.Center
 
                         if multi and isSel then
-                            local Check = MakeLabel(Opt, "✓", 10, Theme.Accent, Enum.Font.GothamBold, Enum.TextXAlignment.Right)
+                            local Check = MakeLabel(Opt, "v", 10, Theme.Accent, Enum.Font.GothamBold, Enum.TextXAlignment.Right)
                             Check.Size = UDim2.new(0,18,1,0) Check.Position = UDim2.new(1,-20,0,0)
                             Check.TextYAlignment = Enum.TextYAlignment.Center
                         end
